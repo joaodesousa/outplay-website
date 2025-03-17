@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Menu } from "lucide-react"
+import Image from "next/image"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -20,13 +21,13 @@ export function Navigation() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 py-8 transition-all duration-300 ${
+      className={`fixed top-0 left-0 w-full z-50 py-8 transition-all duration-300 font-semibold ${
         isScrolled ? "bg-black/90 backdrop-blur-md shadow-lg py-4" : ""
       }`}
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold">
-          OUTPLAY<sup className="text-xs align-super">®</sup>
+          <Image src="./logo_white.png" alt="OUTPLAY" width={130} height={130} />
         </Link>
 
         <div className="hidden md:flex items-center space-x-12">

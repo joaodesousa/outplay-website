@@ -111,21 +111,11 @@ export function Hero() {
 
   return (
     <section ref={heroRef} className="min-h-screen pt-32 pb-20 flex items-center relative overflow-hidden">
-      {/* Cursor light effect - now using direct DOM manipulation for smoothness */}
       <div
         ref={lightRef}
         className="absolute pointer-events-none opacity-20 rounded-full bg-white blur-[100px] w-[400px] h-[400px]"
         style={{ willChange: "transform" }}
       />
-
-      {/* Subtle grid background */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="w-full h-full grid grid-cols-12 grid-rows-6">
-          {Array.from({ length: 12 * 6 }).map((_, i) => (
-            <div key={i} className="border border-gray-700"></div>
-          ))}
-        </div>
-      </div>
 
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <motion.div className="flex flex-col items-center" style={{ opacity: contentOpacity }}>
@@ -152,19 +142,19 @@ export function Hero() {
               opacity: 1,
               y: 0,
               x: textParallax.x,
+            }}
+            style={{
               rotateX: textParallax.y * 0.05,
               rotateY: -textParallax.x * 0.05,
+              willChange: "transform"
             }}
             transition={{
               duration: 0.8,
               delay: 0.3,
               x: { type: "spring", stiffness: 50, damping: 20 },
-              rotateX: { type: "spring", stiffness: 50, damping: 20 },
-              rotateY: { type: "spring", stiffness: 50, damping: 20 },
             }}
-            style={{ willChange: "transform" }}
           >
-            <span className="font-light">we</span> <span className="font-bold">transform science</span>{" "}
+            <span className="font-light">we</span> <span className="font-bold">transform your ideas</span>{" "}
             <span className="font-light">into</span> <span className="font-bold">stories</span>
           </motion.h1>
 
@@ -175,17 +165,18 @@ export function Hero() {
               opacity: 1,
               y: 0,
               x: subtitleParallax.x,
+            }}
+            style={{
               y: subtitleParallax.y,
+              willChange: "transform"
             }}
             transition={{
               duration: 0.8,
               delay: 0.5,
               x: { type: "spring", stiffness: 50, damping: 20 },
-              y: { type: "spring", stiffness: 50, damping: 20 },
             }}
-            style={{ willChange: "transform" }}
           >
-            the experience that drives positive relationship impact for sustainable scientific innovation
+            crafting narratives that resonate, inspire, and drive meaningful connections
           </motion.p>
         </motion.div>
       </div>
@@ -202,7 +193,7 @@ export function Hero() {
         <p className="text-sm text-gray-400 mb-2">Scroll to explore</p>
         <motion.div
           animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, repeatType: "loop" }}
+          transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
         >
           <ChevronDown className="text-white" size={24} />
         </motion.div>
@@ -213,4 +204,3 @@ export function Hero() {
     </section>
   )
 }
-

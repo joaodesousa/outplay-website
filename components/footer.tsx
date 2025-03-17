@@ -36,7 +36,7 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-8 border-t border-gray-900">
           <div className="mb-6 md:mb-0">
-            <p className="text-sm text-gray-600">© 2023 OUTPLAY. All rights reserved.</p>
+            <p className="text-sm text-gray-600">© {new Date().getFullYear()} OUTPLAY. All rights reserved.</p>
           </div>
 
           <div className="flex space-x-8">

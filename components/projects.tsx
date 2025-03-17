@@ -7,13 +7,13 @@ import { ArrowRight } from "lucide-react"
 
 const projects = [
   {
-    title: "quantum visualization",
-    category: "interactive design",
+    title: "reculture",
+    category: "webdesign, communication, dissemination",
     description:
-      "An immersive platform visualizing complex quantum physics concepts through interactive 3D models and animations.",
+      "Sports are an universal language. This project explored them as tool for migrant integration in Europe.",
     image: "/placeholder.svg?height=800&width=1200",
-    client: "National Physics Institute",
-    year: "2023",
+    client: "Erasmus+",
+    year: "2020",
   },
   {
     title: "biotech rebrand",
@@ -134,7 +134,7 @@ export function Projects() {
                   <div className="md:col-span-4">
                     <div className="space-y-6">
                       <div>
-                        <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Client</h4>
+                        <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Program</h4>
                         <p className="text-white">{projects[activeIndex].client}</p>
                       </div>
                       <div>

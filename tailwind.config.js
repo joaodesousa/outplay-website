@@ -53,7 +53,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ['var(--font-mark-pro)', 'sans-serif'],
       },
     },
   },

@@ -15,23 +15,12 @@ export function Contact() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6">
-              Let's create the <span className="font-bold">best</span>
+              Let's craft <span className="font-bold">your</span>
               <br />
-              <span className="font-bold">scientific</span>
+              <span className="font-bold">perfect</span>
               <br />
-              <span className="font-bold">experience</span> for your
-              <br />
-              business?
+              <span className="font-bold">story</span>?
             </h2>
-
-            <div className="flex items-center mt-12 space-x-4">
-              <div className="w-16 h-16 rounded-full border border-gray-700 flex items-center justify-center">
-                <img src="/placeholder.svg?height=40&width=40" alt="Award" className="w-8 h-8" />
-              </div>
-              <div className="w-16 h-16 rounded-full border border-gray-700 flex items-center justify-center">
-                <img src="/placeholder.svg?height=40&width=40" alt="Award" className="w-8 h-8" />
-              </div>
-            </div>
           </motion.div>
 
           <motion.div

@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Cursor } from '@/components/cursor'
+import localFont from 'next/font/local'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'OUTPLAY - your storytelling partner',
+  description: 'Transforming your work into stories that resonate',
 }
+
 
 export default function RootLayout({
   children,
@@ -13,8 +15,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" >
+      <body className="bg-black text-white">
+        {children}
+        <Cursor />
+      </body>
     </html>
   )
 }
