@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 const ComingSoonPage = () => {
@@ -10,6 +10,8 @@ const ComingSoonPage = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const lightControls = useAnimation();
 
   useEffect(() => {
     if (!pageRef.current) return;
@@ -18,45 +20,88 @@ const ComingSoonPage = () => {
       if (pageRef.current) {
         const { width, height } = pageRef.current.getBoundingClientRect();
         setDimensions({ width, height });
+        
+        // Check if device is mobile
+        setIsMobile(window.innerWidth <= 768);
       }
     };
 
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
 
-    // Use RAF for smoother cursor tracking
-    let rafId: number | null = null;
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
+    // For desktop: mouse tracking
+    if (!isMobile) {
+      // Use RAF for smoother cursor tracking
+      let rafId: number | null = null;
+      let targetX = 0;
+      let targetY = 0;
+      let currentX = 0;
+      let currentY = 0;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (pageRef.current) {
-        const { left, top } = pageRef.current.getBoundingClientRect();
-        targetX = e.clientX - left;
-        targetY = e.clientY - top;
-      }
-    };
+      const handleMouseMove = (e: MouseEvent) => {
+        if (pageRef.current) {
+          const { left, top } = pageRef.current.getBoundingClientRect();
+          targetX = e.clientX - left;
+          targetY = e.clientY - top;
+        }
+      };
 
-    const updateLightPosition = () => {
-      // Smooth interpolation for cursor movement
-      currentX += (targetX - currentX) * 0.1;
-      currentY += (targetY - currentY) * 0.1;
+      const updateLightPosition = () => {
+        // Smooth interpolation for cursor movement
+        currentX += (targetX - currentX) * 0.1;
+        currentY += (targetY - currentY) * 0.1;
 
-      setMousePosition({ x: currentX, y: currentY });
-      rafId = requestAnimationFrame(updateLightPosition);
-    };
+        setMousePosition({ x: currentX, y: currentY });
+        rafId = requestAnimationFrame(updateLightPosition);
+      };
 
-    updateLightPosition();
-    window.addEventListener("mousemove", handleMouseMove);
+      updateLightPosition();
+      window.addEventListener("mousemove", handleMouseMove);
 
-    return () => {
-      window.removeEventListener("resize", updateDimensions);
-      window.removeEventListener("mousemove", handleMouseMove);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, []);
+      return () => {
+        window.removeEventListener("resize", updateDimensions);
+        window.removeEventListener("mousemove", handleMouseMove);
+        if (rafId) cancelAnimationFrame(rafId);
+      };
+    } else {
+      // For mobile: autonomous light movement
+      const animateLight = async () => {
+        // Start animation sequence
+        await lightControls.start({
+          x: dimensions.width * 0.7,
+          y: dimensions.height * 0.3,
+          transition: { duration: 4, ease: "easeInOut" }
+        });
+        
+        await lightControls.start({
+          x: dimensions.width * 0.3,
+          y: dimensions.height * 0.7,
+          transition: { duration: 4, ease: "easeInOut" }
+        });
+        
+        await lightControls.start({
+          x: dimensions.width * 0.8,
+          y: dimensions.height * 0.8,
+          transition: { duration: 4, ease: "easeInOut" }
+        });
+        
+        await lightControls.start({
+          x: dimensions.width * 0.2,
+          y: dimensions.height * 0.2,
+          transition: { duration: 4, ease: "easeInOut" }
+        });
+        
+        // Repeat the animation
+        animateLight();
+      };
+      
+      animateLight();
+      
+      return () => {
+        window.removeEventListener("resize", updateDimensions);
+      };
+    }
+  }, [dimensions.width, dimensions.height, isMobile, lightControls]);
 
   // Calculate relative position for parallax effect
   const calcParallaxValue = (strength = 0.05) => {
