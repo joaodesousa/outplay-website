@@ -1,4 +1,3 @@
-"use client"
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -6,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 const ComingSoonPage = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const pageRef = useRef(null);
+  const pageRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,13 +24,13 @@ const ComingSoonPage = () => {
     window.addEventListener("resize", updateDimensions);
 
     // Use RAF for smoother cursor tracking
-    let rafId = null;
+    let rafId: number | null = null;
     let targetX = 0;
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (pageRef.current) {
         const { left, top } = pageRef.current.getBoundingClientRect();
         targetX = e.clientX - left;
@@ -75,7 +74,7 @@ const ComingSoonPage = () => {
   const dotParallax = calcParallaxValue(0.04);
   const subtitleParallax = calcParallaxValue(0.01);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (email) {
       setIsSubmitting(true);
