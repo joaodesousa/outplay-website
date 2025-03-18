@@ -5,18 +5,23 @@ import { About } from "@/components/about"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 import { Suspense } from "react"
+import { Skills } from "@/components/skills"
+import { CookieNotice } from "@/components/cookie-notice"
+import { Marquee } from "@/components/marquee"
+import { LoadingScreen } from "@/components/loading-screen"
 
 export default function Home() {
   return (
     <main className="bg-black text-white min-h-screen">
       <Navigation />
-      <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoadingScreen />
         <Hero />
         <Projects />
-        <About />
+        <Skills />
+        <Marquee />
         <Contact />
         <Footer />
-      </Suspense>
+        <CookieNotice />
     </main>
   )
 }

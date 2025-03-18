@@ -49,10 +49,6 @@ export function Hero() {
       currentX += (targetX - currentX) * 0.1
       currentY += (targetY - currentY) * 0.1
 
-      if (lightRef.current) {
-        lightRef.current.style.transform = `translate(${currentX - 200}px, ${currentY - 200}px)`
-      }
-
       setMousePosition({ x: currentX, y: currentY })
       rafId = requestAnimationFrame(updateLightPosition)
     }
@@ -110,11 +106,18 @@ export function Hero() {
   }
 
   return (
-    <section ref={heroRef} className="min-h-screen pt-32 pb-20 flex items-center relative overflow-hidden">
-      <div
-        ref={lightRef}
-        className="absolute pointer-events-none opacity-20 rounded-full bg-white blur-[100px] w-[400px] h-[400px]"
-        style={{ willChange: "transform" }}
+    <section ref={heroRef} className="min-h-screen pt-12 pb-20 flex items-center relative overflow-hidden">
+      {/* Light effect that follows cursor */}
+      <div 
+        className="absolute pointer-events-none opacity-60 rounded-full blur-[100px] w-[500px] h-[500px]"
+        style={{
+          left: `${mousePosition.x}px`,
+          top: `${mousePosition.y}px`,
+          transform: 'translate(-50%, -50%)',
+          willChange: "transform, left, top",
+          background:
+            "radial-gradient(circle, rgba(77,171,247,0.7) 0%, rgba(41,121,255,0.4) 40%, rgba(28,85,179,0.1) 70%, rgba(11,50,96,0) 100%)",
+        }}
       />
 
       <div className="container mx-auto px-6 md:px-12 relative z-10">
@@ -154,8 +157,8 @@ export function Hero() {
               x: { type: "spring", stiffness: 50, damping: 20 },
             }}
           >
-            <span className="font-light">we</span> <span className="font-bold">transform your ideas</span>{" "}
-            <span className="font-light">into</span> <span className="font-bold">stories</span>
+            <span className="font-light">we</span> <span className="font-bold">write the rules</span>{" "}
+            <span className="font-light">you</span> <span className="font-bold">follow</span>
           </motion.h1>
 
           <motion.p
@@ -176,7 +179,7 @@ export function Hero() {
               x: { type: "spring", stiffness: 50, damping: 20 },
             }}
           >
-            crafting narratives that resonate, inspire, and drive meaningful connections
+           the impossible was never our style
           </motion.p>
         </motion.div>
       </div>

@@ -1,5 +1,5 @@
 "use client"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Instagram, Linkedin } from "lucide-react"
 import Link from "next/link"
 
 export function Footer() {
@@ -22,15 +22,17 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg font-medium mb-6">sales</h3>
+            <h3 className="text-lg font-medium mb-6">contact</h3>
             <p className="text-gray-400 mb-2">+351 256 197 889</p>
-            <p className="text-gray-400">commercial@outplay.agency</p>
+            <p className="text-gray-400">hello@outplay.pt</p>
           </div>
 
-          <div>
-            <h3 className="text-lg font-medium mb-6">support</h3>
-            <p className="text-gray-400 mb-2">+351 308 811 185</p>
-            <p className="text-gray-400">support@outplay.agency</p>
+          <div className="flex flex-col justify-between h-full">
+            <h3 className="text-lg font-medium mb-6">social media</h3>
+            <div className="flex space-x-4">
+              <Link href="https://instagram.com/outplay.pt" target="_blank"><Instagram strokeWidth={1.5} /></Link>
+              <Link href="https://linkedin.com/company/outplaypt" target="_blank"><Linkedin strokeWidth={1.5} /></Link>
+            </div>
           </div>
         </div>
 
@@ -40,13 +42,10 @@ export function Footer() {
           </div>
 
           <div className="flex space-x-8">
-            <Link href="#" className="text-sm text-gray-600 hover:text-white transition-colors duration-300">
+            <Link href="/privacy-policy" className="text-sm text-gray-600 hover:text-white transition-colors duration-300">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-sm text-gray-600 hover:text-white transition-colors duration-300">
-              Terms of Service
-            </Link>
-            <Link href="#" className="text-sm text-gray-600 hover:text-white transition-colors duration-300">
+            <Link href="/cookie-policy" className="text-sm text-gray-600 hover:text-white transition-colors duration-300">
               Cookie Policy
             </Link>
           </div>

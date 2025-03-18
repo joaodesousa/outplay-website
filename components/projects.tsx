@@ -4,43 +4,38 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 const projects = [
   {
-    title: "reculture",
-    category: "webdesign, communication, dissemination",
+    title: "veto",
+    category: "webdesign, webdevelopment",
     description:
-      "Sports are an universal language. This project explored them as tool for migrant integration in Europe.",
+      "Platform using Portugal's Parliament open data to improve citizen access to legislative information.",
+    image: "/projects/veto.png",
+    client: "OUTPLAY",
+    year: "2025",
+    url: "https://veto.pt",
+  },
+  {
+    title: "reculture",
+    category: "communication, dissemination, webdesign",
+    description:
+      "Taking advantage of sports as an universal language for the integration of young migrants.",
     image: "/placeholder.svg?height=800&width=1200",
     client: "Erasmus+",
     year: "2020",
+    url: "https://reculture-project.eu",
   },
   {
-    title: "biotech rebrand",
-    category: "branding",
+    title: "rural jump-start",
+    category: "communication, dissemination, webdesign",
     description:
-      "Complete visual identity transformation for a leading biotechnology research institute focused on genetic engineering.",
+      "Empowering young entrepreneurs in rural areas to help them create their own businesses.",
     image: "/placeholder.svg?height=800&width=1200",
-    client: "GeneTech Research",
-    year: "2022",
-  },
-  {
-    title: "climate research",
-    category: "communication",
-    description:
-      "Multi-channel campaign communicating critical climate research findings to policy makers and the public.",
-    image: "/placeholder.svg?height=800&width=1200",
-    client: "Global Climate Initiative",
-    year: "2023",
-  },
-  {
-    title: "science summit",
-    category: "event design",
-    description:
-      "Comprehensive design system for an international scientific conference bringing together researchers from 30+ countries.",
-    image: "/placeholder.svg?height=800&width=1200",
-    client: "International Science Foundation",
-    year: "2022",
+    client: "Erasmus+",
+    year: "2021",
+    url: "https://ruraljumpstart.eu",
   },
 ]
 
@@ -58,7 +53,7 @@ export function Projects() {
           transition={{ duration: 0.8 }}
         >
           <div className="w-3 h-3 bg-white rounded-full mr-8" />
-          <h2 className="text-5xl md:text-6xl font-bold">Projects we created</h2>
+          <h2 className="text-5xl md:text-6xl font-bold">things we did</h2>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -126,7 +121,9 @@ export function Projects() {
                       whileHover={{ x: 5 }}
                       transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     >
+                      <Link href={projects[activeIndex].url}>
                       <span>View project</span>
+                      </Link>
                       <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-200" />
                     </motion.button>
                   </div>
@@ -134,7 +131,7 @@ export function Projects() {
                   <div className="md:col-span-4">
                     <div className="space-y-6">
                       <div>
-                        <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Program</h4>
+                        <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Client</h4>
                         <p className="text-white">{projects[activeIndex].client}</p>
                       </div>
                       <div>
