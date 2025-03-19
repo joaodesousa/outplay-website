@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Cursor } from '@/components/cursor'
 import localFont from 'next/font/local'
+import './ghost-content.css';
+
 
 export const metadata: Metadata = {
   title: 'OUTPLAY - we write the rules you follow',
