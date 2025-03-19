@@ -4,6 +4,7 @@ import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { getAllPosts } from "@/lib/ghost"
 import { BlogNewsletter } from "./components/newsletter"
+import { Metadata } from "next"
 
 // Define the Post interface here
 interface Post {
@@ -22,11 +23,13 @@ interface Post {
 
 export const revalidate = 3600; // Revalidate the data at most every hour
 
+export const metadata: Metadata = {
+  title: 'Blog | OUTPLAY',
+  description: 'Insights, strategies, and case studies on communicating scientific innovation effectively.',
+}
+
 export default async function BlogPage() {
   const posts = await getAllPosts();
-  
-  console.log('First post structure:', JSON.stringify(posts[0], null, 2));
-  
   const featuredPost = posts[0]; // Use the first post as featured
 
   return (
@@ -90,7 +93,7 @@ export default async function BlogPage() {
                   <div className="flex items-center">
                     {/* Author image with fallback */}
                     <div className="w-10 h-10 rounded-full bg-gray-800 mr-3 overflow-hidden">
-                        {featuredPost.authors[0]?.profile_image ? (
+                        {featuredPost.authors && featuredPost.authors[0]?.profile_image ? (
                             <Image
                             src={featuredPost.authors[0].profile_image}
                             alt={featuredPost.authors[0].name || "Author"}
@@ -100,13 +103,13 @@ export default async function BlogPage() {
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                            {(featuredPost.authors[0]?.name || "").charAt(0)}
+                            {(featuredPost.authors && featuredPost.authors[0]?.name || "").charAt(0)}
                             </div>
                         )}
-                        </div>
+                    </div>
                     <div>
                       <p className="text-sm font-medium">
-                        {featuredPost.authors[0]?.name || featuredPost.authors?.[0]?.name || "Unknown Author"}
+                        {featuredPost.authors && featuredPost.authors[0]?.name || "Unknown Author"}
                       </p>
                       <p className="text-xs text-gray-500">
                         {new Date(featuredPost.published_at).toLocaleDateString('en-US', {
@@ -134,72 +137,78 @@ export default async function BlogPage() {
       {/* All Posts */}
       <section className="py-20 border-t border-gray-900">
         <div className="container mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-            {posts.slice(1).map((post: Post, index: number) => (
-              <article key={index} className="flex flex-col h-full">
-                <div className="relative aspect-[4/3] mb-6 overflow-hidden group">
-                  {post.feature_image ? (
-                    <Image
-                      src={post.feature_image}
-                      alt={post.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
-                      <span className="text-gray-400">No image available</span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span className="text-white border border-white px-4 py-2 text-sm">Read article</span>
-                  </div>
-                </div>
-
-                <div className="mb-3">
-                  <span className="text-xs text-gray-400 uppercase tracking-wider">
-                    {post.tags[0]?.name || post.tags?.[0]?.name || "General"}
-                  </span>
-                </div>
-
-                <Link href={`/blog/${post.slug}`} className="mb-3">
-                  <h3 className="text-xl font-bold hover:text-gray-300 transition-colors duration-300">{post.title}</h3>
-                </Link>
-
-                <p className="text-gray-400 text-sm mb-6">{post.custom_excerpt || post.excerpt}</p>
-
-                <div className="flex items-center mt-auto">
-                  {/* Author image with fallback */}
-                  <div className="w-8 h-8 rounded-full bg-gray-800 mr-3 overflow-hidden">
-                    {post.authors && post.authors.length > 0 && post.authors[0]?.profile_image ? (
-                      <Image 
-                        src={post.authors[0].profile_image}
-                        alt={post.authors[0].name || "Author"} 
-                        width={32} 
-                        height={32}
-                        className="w-full h-full object-cover"
+          {posts.length <= 1 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-400">More articles coming soon!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+              {posts.slice(1).map((post: Post, index: number) => (
+                <article key={index} className="flex flex-col h-full">
+                  <div className="relative aspect-[4/3] mb-6 overflow-hidden group">
+                    {post.feature_image ? (
+                      <Image
+                        src={post.feature_image}
+                        alt={post.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                        {(post.authors && post.authors.length > 0 ? post.authors[0]?.name : "Unknown Author")?.charAt(0)}
+                      <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                        <span className="text-gray-400">No image available</span>
                       </div>
                     )}
+                    <div className="absolute inset-0 bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <span className="text-white border border-white px-4 py-2 text-sm">Read article</span>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-medium">
-                      {post.authors && post.authors.length > 0 ? post.authors[0]?.name : "Unknown Author"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(post.published_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </p>
+
+                  <div className="mb-3">
+                    <span className="text-xs text-gray-400 uppercase tracking-wider">
+                      {post.tags && post.tags[0]?.name || "General"}
+                    </span>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
+
+                  <Link href={`/blog/${post.slug}`} className="mb-3">
+                    <h3 className="text-xl font-bold hover:text-gray-300 transition-colors duration-300">{post.title}</h3>
+                  </Link>
+
+                  <p className="text-gray-400 text-sm mb-6">{post.custom_excerpt || post.excerpt}</p>
+
+                  <div className="flex items-center mt-auto">
+                    {/* Author image with fallback */}
+                    <div className="w-8 h-8 rounded-full bg-gray-800 mr-3 overflow-hidden">
+                      {post.authors && post.authors.length > 0 && post.authors[0]?.profile_image ? (
+                        <Image 
+                          src={post.authors[0].profile_image}
+                          alt={post.authors[0].name || "Author"} 
+                          width={32} 
+                          height={32}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          {(post.authors && post.authors.length > 0 ? post.authors[0]?.name : "Unknown Author")?.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium">
+                        {post.authors && post.authors.length > 0 ? post.authors[0]?.name : "Unknown Author"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.published_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
 
           {posts.length > 4 && (
             <div className="flex justify-center mt-16">

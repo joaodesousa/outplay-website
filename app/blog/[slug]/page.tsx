@@ -6,6 +6,7 @@ import { Facebook, Twitter, Linkedin, Copy, ArrowLeft } from "lucide-react"
 import { getPostBySlug, getAllPosts } from "@/lib/ghost"
 import { BlogNewsletter } from "../components/newsletter"
 import { GhostContentRenderer } from "@/components/GhostContentRenderer"
+import { Metadata } from "next"
 
 interface Post {
     slug: string;
@@ -32,6 +33,7 @@ interface Post {
     }[];
 }
 
+export const dynamic = 'force-static';
 export const revalidate = 3600; // Revalidate every hour
 
 // Generate static params for all posts at build time
@@ -43,8 +45,28 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug);
+// Generate metadata for the page
+export async function generateMetadata(props: { params: { slug: string } }): Promise<Metadata> {
+  const post = await getPostBySlug(props.params.slug);
+  
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'The post you are looking for could not be found.',
+    };
+  }
+  
+  return {
+    title: `${post.title} | OUTPLAY Blog`,
+    description: post.custom_excerpt || post.excerpt || '',
+    openGraph: post.feature_image ? {
+      images: [{ url: post.feature_image }],
+    } : undefined,
+  };
+}
+
+export default async function BlogPostPage(props: { params: { slug: string } }) {
+  const post = await getPostBySlug(props.params.slug);
   
   if (!post) {
     // Handle not found case
