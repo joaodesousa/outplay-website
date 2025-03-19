@@ -8,6 +8,9 @@ import './ghost-content.css';
 export const metadata: Metadata = {
   title: 'OUTPLAY - we write the rules you follow',
   description: 'Innovative branding, digital experiences, communication strategies, and event design for forward-thinking organizations. Breaking conventions with creative solutions that stand out.',
+  icons: {
+    icon: '/favicon.ico',
+  }
 }
 
 
