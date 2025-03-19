@@ -35,7 +35,7 @@ export function Navigation() {
             {["about", "blog"].map((item) => (
               <Link
                 key={item}
-                href={`#${item}`}
+                href={`/${item}`}
                 className="text-gray-400 hover:text-white transition-colors duration-300 lowercase"
               >
                 {item}

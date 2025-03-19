@@ -18,6 +18,16 @@ const projects = [
     url: "https://veto.pt",
   },
   {
+    title: "pérola de esmalte",
+    category: "webdesign, webdevelopment",
+    description:
+      "A dental clinic with a touch of elegance and sophistication based in Lousada, Porto.",
+    image: "/projects/perola.png",
+    client: "Pérola de Esmalte",
+    year: "2025",
+    url: "https://veto.pt",
+  },
+  {
     title: "reculture",
     category: "communication, dissemination, webdesign",
     description:
