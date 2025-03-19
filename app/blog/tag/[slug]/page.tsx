@@ -24,19 +24,21 @@ interface Post {
 export const revalidate = 3600; // Revalidate every hour
 
 // Generate metadata for the page
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params;
   // Properly await the slug parameter
   const slug = await params.slug;
   const posts = await getPostsByTag(slug);
   const tagName = posts.length > 0 ? posts[0].tags[0]?.name : slug;
-  
+
   return {
     title: `${tagName} | OUTPLAY Blog`,
     description: `Articles tagged with ${tagName}`,
   };
 }
 
-export default async function BlogTagPage({ params }: { params: { slug: string } }) {
+export default async function BlogTagPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   // Properly await the slug parameter
   const slug = params.slug;
   const posts = await getPostsByTag(slug);

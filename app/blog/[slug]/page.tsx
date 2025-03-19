@@ -46,8 +46,8 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for the page
-export async function generateMetadata(props: { params: { slug: string } }): Promise<Metadata> {
-  const post = await getPostBySlug(props.params.slug);
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const post = await getPostBySlug((await props.params).slug);
   
   if (!post) {
     return {
@@ -65,8 +65,8 @@ export async function generateMetadata(props: { params: { slug: string } }): Pro
   };
 }
 
-export default async function BlogPostPage(props: { params: { slug: string } }) {
-  const post = await getPostBySlug(props.params.slug);
+export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
+  const post = await getPostBySlug((await props.params).slug);
   
   if (!post) {
     // Handle not found case
