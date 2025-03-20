@@ -96,6 +96,7 @@ export function Navigation() {
                   { name: "skills", href: "#skills" },
                   { name: "about", href: "/about" },
                   { name: "blog", href: "/blog" },
+                  { name: "contact", href: "/contact" },
                 ].map((item, index) => (
                   <motion.div
                     key={item.name}

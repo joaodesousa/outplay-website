@@ -16,6 +16,8 @@ const ComingSoonPage = () => {
   const [lastSubmission, setLastSubmission] = useState(0);
   // Error message state
   const [errorMessage, setErrorMessage] = useState("");
+  // Track input focus state
+  const [inputFocused, setInputFocused] = useState(false);
 
   useEffect(() => {
     if (!pageRef.current) return;
@@ -108,6 +110,9 @@ const ComingSoonPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage("");
+    
+    // Reset focus state when submitting
+    setInputFocused(false);
     
     // Anti-spam checks
     // 1. Check if honeypot field is filled (bots often fill hidden fields)
@@ -265,27 +270,42 @@ const ComingSoonPage = () => {
         >
           <h3 className="text-lg font-medium mb-6 text-center">get notified when we launch</h3>
           <form onSubmit={handleSubmit} className="relative">
-            <div className="flex items-center border-b border-gray-800">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="enter your email"
-                className="w-full bg-transparent py-3 focus:outline-none placeholder-gray-600"
-                required
-              />
-              <button 
-                type="submit" 
-                className="text-white p-2"
-                aria-label="Subscribe"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
-                ) : (
-                  <ArrowRight size={20} />
-                )}
-              </button>
+            <div className="relative">
+              {/* Form container with conditional border animation */}
+              <div className="flex items-center border-b border-gray-800 relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="enter your email"
+                  className="w-full bg-transparent py-3 focus:outline-none placeholder-gray-600 border-0"
+                  required
+                  disabled={isSubmitting}
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
+                />
+                
+                <button 
+                  type="submit" 
+                  className="text-white p-2"
+                  aria-label="Subscribe"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
+                  ) : (
+                    <ArrowRight size={20} />
+                  )}
+                </button>
+                
+                {/* Full-width animated border that goes all the way across */}
+                <div 
+                  className="absolute bottom-0 left-0 w-full h-px bg-white transform-gpu origin-left transition-transform duration-300"
+                  style={{ 
+                    transform: inputFocused ? 'scaleX(1)' : 'scaleX(0)'
+                  }}
+                />
+              </div>
             </div>
             
             {/* Hidden honeypot field to catch bots */}

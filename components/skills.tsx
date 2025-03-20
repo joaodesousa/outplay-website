@@ -20,20 +20,6 @@ const skillCategories = [
     ],
   },
   {
-    id: "digital",
-    title: "Digital Experiences",
-    description:
-      "Digital doesn't have to follow the same old patterns. We create experiences that challenge expectations while delivering what users actually need and want.",
-    skills: [
-      "Website design & development",
-      "Platform creation",
-      "User experience design",
-      "Digital product development",
-      "Data visualization",
-      "Interactive solutions",
-    ],
-  },
-  {
     id: "communication",
     title: "Communication Strategy",
     description:
@@ -45,6 +31,35 @@ const skillCategories = [
       "Project dissemination",
       "Audience engagement",
       "Communication planning",
+    ],
+  },
+  {
+    id: "funding",
+    title: "Funding Acquisition",
+    description:
+      "We approach funding proposals with strategic creativity, finding angles and narratives that make your projects stand out in competitive European funding landscapes.",
+    skills: [
+      "Erasmus+ proposals",
+      "Project conceptualization",
+      "Horizon Europe submissions",
+      "Budget development",
+      "Portugal 2030 funding",
+      "Impact assessment",
+      
+    ],
+  },
+  {
+    id: "digital",
+    title: "Digital Experiences",
+    description:
+      "Digital doesn't have to follow the same old patterns. We create experiences that challenge expectations while delivering what users actually need and want.",
+    skills: [
+      "Website design & development",
+      "Platform creation",
+      "User experience design",
+      "Digital product development",
+      "Data visualization",
+      "Interactive solutions",
     ],
   },
   {
