@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Menu, X, Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
@@ -22,17 +21,17 @@ export function Navigation() {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 py-8 transition-all duration-300 ${
-        isScrolled ? "bg-black/90 backdrop-blur-md shadow-lg py-4" : ""
+        isScrolled && !isMenuOpen ? "bg-black/90 backdrop-blur-md shadow-lg py-4" : ""
       }`}
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold">
-          <Image src="/logo_white.png" width={120} height={120} alt="OUTPLAY" />
+          OUTPLAY<sup className="text-xs align-super">®</sup>
         </Link>
 
         <div className="hidden md:flex items-center space-x-12">
           <nav className="flex space-x-12">
-            {["about", "blog"].map((item) => (
+            {["about", "blog", "contact"].map((item) => (
               <Link
                 key={item}
                 href={`/${item}`}
@@ -74,10 +73,11 @@ export function Navigation() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            style={{ backgroundColor: "white" }} // Force white background regardless of scroll
           >
             <div className="container mx-auto px-6 md:px-12 py-8 flex justify-between items-center">
               <Link href="/" className="text-2xl font-bold">
-              <Image src="/logo.png" width={120} height={120} alt="OUTPLAY" />
+                OUTPLAY<sup className="text-xs align-super">®</sup>
               </Link>
 
               <button
@@ -92,12 +92,9 @@ export function Navigation() {
             <div className="flex-1 flex items-center justify-center">
               <nav className="text-center">
                 {[
-                  { name: "news", href: "#news" },
                   { name: "portfolio", href: "#portfolio" },
                   { name: "skills", href: "#skills" },
-                  { name: "european projects", href: "#projects" },
-                  { name: "clients", href: "#clients" },
-                  { name: "about", href: "#about" },
+                  { name: "about", href: "/about" },
                   { name: "blog", href: "/blog" },
                 ].map((item, index) => (
                   <motion.div
@@ -119,23 +116,24 @@ export function Navigation() {
             </div>
 
             <div className="container mx-auto px-6 md:px-12 py-8 flex justify-between items-center">
-              <div className="flex space-x-6">
-                {["facebook", "instagram", "twitter", "linkedin"].map((social) => (
-                  <Link
-                    key={social}
-                    href={`https://${social}.com`}
-                    className="text-gray-600 hover:text-black transition-colors duration-300"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className="sr-only">{social}</span>
-                    {social === "facebook" && <Facebook size={20} />}
-                    {social === "instagram" && <Instagram size={20} />}
-                    {social === "twitter" && <Twitter size={20} />}
-                    {social === "linkedin" && <Linkedin size={20} />}
-                  </Link>
-                ))}
-              </div>
+                <div className="flex space-x-6">
+                  {[
+                    { name: "instagram", handle: "outplay.pt" },
+                    { name: "linkedin", handle: "company/outplaypt" }
+                  ].map((social) => (
+                    <Link
+                      key={social.name}
+                      href={`https://${social.name}.com/${social.handle}`}
+                      className="text-gray-600 hover:text-black transition-colors duration-300"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="sr-only">{social.name}</span>
+                      {social.name === "instagram" && <Instagram size={20} />}
+                      {social.name === "linkedin" && <Linkedin size={20} />}
+                    </Link>
+                  ))}
+                </div>
 
               <div className="flex items-center space-x-4">
                 <button className="text-gray-600 hover:text-black transition-colors duration-300">pt</button>
