@@ -1,68 +1,49 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
-export async function POST(request: Request) {
+const GHOST_ADMIN_API_URL = process.env.GHOST_ADMIN_API_URL; // Example: 'https://yourghostsite.com/ghost/api/admin'
+const GHOST_ADMIN_API_KEY = process.env.GHOST_ADMIN_API_KEY; // Get from Ghost Admin
+
+if (!GHOST_ADMIN_API_URL || !GHOST_ADMIN_API_KEY) {
+  throw new Error("Ghost API URL or Admin API Key is missing in environment variables.");
+}
+
+// Generate JWT for authentication
+const getGhostAdminToken = () => {
+  const [id, secret] = GHOST_ADMIN_API_KEY.split(":");
+  return jwt.sign({}, Buffer.from(secret, "hex"), {
+    keyid: id,
+    algorithm: "HS256",
+    expiresIn: "5m",
+    audience: "/admin/",
+  });
+};
+
+// API Route
+export async function POST(req: NextRequest) {
   try {
-    const { email } = await request.json();
+    const { email } = await req.json();
+    if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });
 
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-      return NextResponse.json(
-        { message: 'Please provide a valid email address' },
-        { status: 400 }
-      );
-    }
-
-    // Ensure these environment variables are set
-    const adminApiUrl = process.env.GHOST_ADMIN_API_URL;
-    const adminApiKey = process.env.GHOST_ADMIN_API_KEY;
-
-    if (!adminApiUrl || !adminApiKey) {
-      console.error('Ghost API credentials are missing');
-      return NextResponse.json(
-        { message: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-
-    // Split the admin API key into its components
-    const [id, secret] = adminApiKey.split(':');
-
-    const response = await fetch(`${adminApiUrl}/members`, {
-      method: 'POST',
+    const response = await fetch(`${GHOST_ADMIN_API_URL}/members/`, {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Ghost ${id}:${secret}`
+        "Content-Type": "application/json",
+        Authorization: `Ghost ${getGhostAdminToken()}`,
       },
       body: JSON.stringify({
-        email: email
-      })
+        members: [{ email, subscribed: true }],
+      }),
     });
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Ghost API error response:', errorBody);
-      
-      return NextResponse.json(
-        { message: 'Failed to subscribe. Please try again.' },
-        { status: response.status }
-      );
+      const errorData = await response.json();
+      return NextResponse.json({ error: errorData.errors || "Failed to create member" }, { status: response.status });
     }
 
-    const result = await response.json();
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Successfully subscribed to newsletter!' 
-    });
-
+    const data = await response.json();
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error('Newsletter subscription error:', error);
-    
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : 'Something went wrong';
-    
-    return NextResponse.json(
-      { message: errorMessage },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

@@ -10,6 +10,12 @@ const ComingSoonPage = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Honeypot field value
+  const [honeypot, setHoneypot] = useState("");
+  // Submission timestamp to prevent rapid submissions
+  const [lastSubmission, setLastSubmission] = useState(0);
+  // Error message state
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (!pageRef.current) return;
@@ -75,36 +81,98 @@ const ComingSoonPage = () => {
   const dotParallax = calcParallaxValue(0.04);
   const subtitleParallax = calcParallaxValue(0.01);
 
+  // Email regex for better validation
+  const validateEmail = (email: string): boolean => {
+    // Basic validation
+    const basicPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!basicPattern.test(email)) return false;
+    
+    // Validate domain has at least two parts and TLD is 2+ characters
+    const parts = email.split('@');
+    const domain = parts[1];
+    const domainParts = domain.split('.');
+    if (domainParts.length < 2) return false;
+    if (domainParts[domainParts.length - 1].length < 2) return false;
+    
+    // Disallow certain temporary email domains (add more as needed)
+    const suspiciousDomains = [
+      'tempmail.com', 'temp-mail.org', 'guerrillamail.com', 'mailinator.com',
+      'sharklasers.com', 'yopmail.com', 'throwawaymail.com', 'getnada.com'
+    ];
+    
+    if (suspiciousDomains.some(d => domain.includes(d))) return false;
+    
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email) {
-      setIsSubmitting(true);
-      try {
-        // Send the email to Notion database using the Notion API
-        const response = await fetch('/api/submit-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        });
+    setErrorMessage("");
+    
+    // Anti-spam checks
+    // 1. Check if honeypot field is filled (bots often fill hidden fields)
+    if (honeypot) {
+      console.log("Honeypot triggered - likely bot");
+      // Fake success message to fool bots
+      setSubmitted(true);
+      setEmail("");
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 3000);
+      return;
+    }
+    
+    // 2. Rate limiting - prevent submissions more frequent than 3 seconds apart
+    const now = Date.now();
+    if (now - lastSubmission < 3000) {
+      setErrorMessage("Please wait a moment before submitting again");
+      return;
+    }
+    
+    // 3. Improved email validation
+    if (!validateEmail(email)) {
+      setErrorMessage("Please enter a valid email address");
+      return;
+    }
+    
+    // If we pass all checks, proceed with submission
+    setIsSubmitting(true);
+    setLastSubmission(now);
+    
+    try {
+      // Send the email to Notion database using the Notion API
+      const response = await fetch('/api/submit-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email,
+          // Adding timestamp helps track submission patterns
+          timestamp: new Date().toISOString(),
+          // Add a source for analytics
+          source: 'coming-soon-page' 
+        }),
+      });
 
-        if (response.ok) {
-          console.log(`Subscribed with email: ${email}`);
-          setSubmitted(true);
-          // Clear the email field immediately on success
-          setEmail("");
-          setTimeout(() => {
-            setSubmitted(false);
-          }, 3000);
-        } else {
-          console.error('Failed to submit email to Notion');
-        }
-      } catch (error) {
-        console.error('Error submitting email:', error);
-      } finally {
-        setIsSubmitting(false);
+      if (response.ok) {
+        console.log(`Subscribed with email: ${email}`);
+        setSubmitted(true);
+        // Clear the email field immediately on success
+        setEmail("");
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 3000);
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || 'Failed to submit email. Please try again.');
+        console.error('Failed to submit email to Notion');
       }
+    } catch (error) {
+      setErrorMessage('An error occurred. Please try again later.');
+      console.error('Error submitting email:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -219,6 +287,22 @@ const ComingSoonPage = () => {
                 )}
               </button>
             </div>
+            
+            {/* Hidden honeypot field to catch bots */}
+            <div className="opacity-0 absolute top-0 left-0 h-0 w-0 overflow-hidden">
+              <label>
+                Leave this empty:
+                <input
+                  type="text"
+                  name="honeypot"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </label>
+            </div>
+
             {submitted && (
               <motion.div 
                 className="absolute left-0 -bottom-8 text-green-400 text-sm"
@@ -227,6 +311,17 @@ const ComingSoonPage = () => {
                 exit={{ opacity: 0 }}
               >
                 Thank you! We'll keep you updated.
+              </motion.div>
+            )}
+            
+            {errorMessage && (
+              <motion.div 
+                className="absolute left-0 -bottom-8 text-red-400 text-sm"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                {errorMessage}
               </motion.div>
             )}
           </form>

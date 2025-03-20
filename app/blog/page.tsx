@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer"
 import { getAllPosts } from "@/lib/ghost"
 import { BlogNewsletter } from "./components/newsletter"
 import { Metadata } from "next"
+import { GhostNewsletter } from "./components/ghost-newsletter"
 
 // Define the Post interface here
 interface Post {
@@ -46,7 +47,7 @@ export default async function BlogPage() {
 
           <div className="mb-12">
             <p className="text-xl md:text-2xl text-gray-300 max-w-3xl">
-              Insights, strategies, and case studies on communicating scientific innovation effectively.
+            The rule-breaker's guide to what's next.
             </p>
           </div>
         </div>
@@ -60,12 +61,16 @@ export default async function BlogPage() {
               <div className="lg:col-span-7">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   {featuredPost.feature_image ? (
+                     <Link
+                     href={`/blog/${featuredPost.slug}`}
+                   >
                     <Image
                       src={featuredPost.feature_image}
                       alt={featuredPost.title}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-300 ease-in-out hover:scale-110"
                     />
+                    </Link>
                   ) : (
                     <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
                       <span className="text-gray-400">No image available</span>
@@ -220,7 +225,7 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      <BlogNewsletter />
+      <GhostNewsletter />
 
       <Footer />
     </main>

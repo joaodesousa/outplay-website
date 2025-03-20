@@ -1,8 +1,38 @@
-"use client"
-import { ArrowRight, Instagram, Linkedin } from "lucide-react"
-import Link from "next/link"
+"use client";
+
+import { useState } from "react";
+import { ArrowRight, Instagram, Linkedin } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubscribe = async () => {
+    if (!email.trim()) return;
+
+    setStatus("loading");
+
+    try {
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        setStatus("success");
+        setEmail(""); // Clear input
+      } else {
+        setStatus("error");
+      }
+    } catch (error) {
+      setStatus("error");
+    }
+
+    setTimeout(() => setStatus("idle"), 3000); // Reset status after 3s
+  };
+
   return (
     <footer className="py-16 border-t border-gray-900">
       <div className="container mx-auto px-6 md:px-12">
@@ -14,11 +44,19 @@ export function Footer() {
                 type="email"
                 placeholder="enter your email"
                 className="w-full bg-transparent py-3 focus:outline-none placeholder-gray-600"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              <button className="text-white">
+              <button
+                className="text-white"
+                onClick={handleSubscribe}
+                disabled={status === "loading"}
+              >
                 <ArrowRight size={20} />
               </button>
             </div>
+            {status === "success" && <p className="text-green-500 text-sm mt-2">Subscribed successfully!</p>}
+            {status === "error" && <p className="text-red-500 text-sm mt-2">Subscription failed. Try again.</p>}
           </div>
 
           <div>
@@ -52,6 +90,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
-

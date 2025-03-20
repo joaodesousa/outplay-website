@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 
-export function BlogNewsletter() {
+export function GhostNewsletter() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -17,7 +17,8 @@ export function BlogNewsletter() {
     setErrorMessage('')
 
     try {
-      const response = await fetch('/api/submit-email', {
+      // Use Ghost Members API endpoint instead of your custom endpoint
+      const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
