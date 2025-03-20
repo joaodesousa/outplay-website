@@ -40,6 +40,21 @@ export default function ContactPage() {
     "HOW SHOULD WE CONTACT YOU?",
   ]
 
+  // Track mouse position for background effect - client-side only
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        setMousePosition({
+          x: ((e.clientX - rect.left) / rect.width) * 100,
+          y: ((e.clientY - rect.top) / rect.height) * 100,
+        })
+      }
+    }
+
+    window.addEventListener("mousemove", handleMouseMove)
+    return () => window.removeEventListener("mousemove", handleMouseMove)
+  }, [])
 
   // Handle key presses
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -83,6 +98,20 @@ export default function ContactPage() {
     setShowSuccessMessage(false)
   }
 
+  // Auto-scroll to bottom of conversation
+  useEffect(() => {
+    // Only auto-scroll if conversation has more than the initial question
+    if (conversation.length > 1) {
+      conversationEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [conversation])
+
+  // Add this new useEffect to ensure page starts at the top
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0)
+  }, [])
+
   // Submit the form data
   const handleSubmit = () => {
     // In a real implementation, you would send the conversation data to your backend
@@ -106,7 +135,62 @@ export default function ContactPage() {
 
   return (
     <main className="bg-black text-white min-h-screen relative overflow-hidden" ref={containerRef}>
-  
+      {/* Background elements */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        {/* Grid lines */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div
+              key={`v-${i}`}
+              className="absolute top-0 bottom-0 w-px bg-gray-800"
+              style={{ left: `${(i + 1) * 10}%` }}
+            />
+          ))}
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div
+              key={`h-${i}`}
+              className="absolute left-0 right-0 h-px bg-gray-800"
+              style={{ top: `${(i + 1) * 10}%` }}
+            />
+          ))}
+        </div>
+
+        {/* Animated circles - client-side only */}
+        <div className="hidden md:block">
+          <motion.div
+            className="absolute w-[800px] h-[800px] rounded-full border border-gray-800"
+            style={{
+              left: `calc(${mousePosition.x}% - 400px)`,
+              top: `calc(${mousePosition.y}% - 400px)`,
+              opacity: 0.1,
+              transition: "left 2s ease-out, top 2s ease-out",
+            }}
+          />
+          <motion.div
+            className="absolute w-[600px] h-[600px] rounded-full border border-gray-800"
+            style={{
+              left: `calc(${mousePosition.x}% - 300px)`,
+              top: `calc(${mousePosition.y}% - 300px)`,
+              opacity: 0.15,
+              transition: "left 1.5s ease-out, top 1.5s ease-out",
+            }}
+          />
+          <motion.div
+            className="absolute w-[400px] h-[400px] rounded-full border border-gray-800"
+            style={{
+              left: `calc(${mousePosition.x}% - 200px)`,
+              top: `calc(${mousePosition.y}% - 200px)`,
+              opacity: 0.2,
+              transition: "left 1s ease-out, top 1s ease-out",
+            }}
+          />
+        </div>
+
+        {/* Abstract shapes */}
+        <div className="absolute top-[20%] left-[10%] w-40 h-40 border border-gray-800 opacity-30 rotate-45" />
+        <div className="absolute bottom-[30%] right-[15%] w-60 h-60 border border-gray-800 opacity-20 -rotate-12" />
+        <div className="absolute top-[60%] left-[70%] w-20 h-20 border border-gray-800 opacity-40 rotate-12" />
+      </div>
 
       <Navigation />
 
@@ -167,7 +251,7 @@ export default function ContactPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="min-h-[50vh] flex flex-col items-center justify-center text-center px-6"
                 >
-                  <h2 className="text-5xl md:text-7xl font-bold mb-8">RULES WERE MEANT TO BE BROKEN</h2>
+                  <h2 className="text-5xl md:text-6xl font-bold mb-8">RULES WERE MEANT TO BE BROKEN</h2>
                   <p className="text-xl text-gray-400 mb-12 max-w-2xl">
                     Thank you for sharing your thoughts. We're excited to start breaking rules together.
                   </p>
