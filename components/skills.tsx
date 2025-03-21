@@ -6,53 +6,39 @@ import { ChevronRight, Plus } from "lucide-react"
 
 const skillCategories = [
   {
-    id: "branding",
-    title: "Branding & Tech",
-    description:
-      "We see brands differently. Where conventional thinking creates familiar outcomes, we look for the unexpected angles that make brands truly stand out.",
-    skills: [
-      "Visual identity development",
-      "Brand strategy",
-      "Tech integration",
-      "Brand guidelines",
-      "Digital brand presence",
-      "Brand storytelling",
-    ],
-  },
-  {
-    id: "communication",
-    title: "Communication Strategy",
-    description:
-      "When everyone's following the same playbook, we're writing a different one. Our communication approaches find the angles others miss and the voices that deserve to be heard.",
-    skills: [
-      "Strategic messaging",
-      "Content development",
-      "Social media strategy",
-      "Project dissemination",
-      "Audience engagement",
-      "Communication planning",
-    ],
-  },
-  {
     id: "funding",
     title: "Funding Acquisition",
     description:
-      "We approach funding proposals with strategic creativity, finding angles and narratives that make your projects stand out in competitive European funding landscapes.",
+      "Every journey begins with resources. We find the angles others miss, turning technically sound proposals into compelling narratives that stand out to evaluators and secure the funding that fuels your vision.",
     skills: [
       "Erasmus+ proposals",
-      "Project conceptualization",
+      "Interreg applications",
       "Horizon Europe submissions",
-      "Budget development",
       "Portugal 2030 funding",
+      "Project conceptualization",
+      "Budget development",
       "Impact assessment",
-      
+    ],
+  },
+  {
+    id: "branding",
+    title: "Brand Identity",
+    description:
+      "We create identities that reject the expected and embrace the distinctive, crafting visual and verbal languages that capture your unique approach to changing the game.",
+    skills: [
+      "Visual identity development",
+      "Brand positioning",
+      "Brand guidelines",
+      "Logo design",
+      "Typography systems",
+      "Brand storytelling",
     ],
   },
   {
     id: "digital",
     title: "Digital Experiences",
     description:
-      "Digital doesn't have to follow the same old patterns. We create experiences that challenge expectations while delivering what users actually need and want.",
+      "Your identity deserves a digital presence that breaks the mold. We create experiences that feel both surprising and intuitive—because standing out doesn't mean sacrificing clarity or function.",
     skills: [
       "Website design & development",
       "Platform creation",
@@ -63,10 +49,38 @@ const skillCategories = [
     ],
   },
   {
+    id: "transformation",
+    title: "Digital Transformation",
+    description:
+      "Breaking free from outdated processes isn't just about new tools—it's about new thinking. We guide organizations through digital evolution, finding the right mix of technology and strategy to transform how you work without losing what makes you unique.",
+    skills: [
+      "Process digitalization",
+      "Workflow optimization",
+      "Digital tools integration",
+      "Legacy system modernization",
+      "Team adaptation support",
+      "Digital maturity assessment",
+    ],
+  },
+  {
+    id: "communication",
+    title: "Communication Strategy",
+    description:
+      "With your foundation established, it's time to be heard. We develop communication approaches that sidestep convention, creating messages that resonate with the people who matter to your mission.",
+    skills: [
+      "Strategic messaging",
+      "Content development",
+      "Social media strategy",
+      "Project dissemination",
+      "Audience engagement",
+      "Communication planning",
+    ],
+  },
+  {
     id: "experiential",
     title: "Event Design",
     description:
-      "Events shouldn't be predictable. We design experiences that break from convention while still hitting your objectives—because memorable doesn't have to mean ordinary.",
+      "The journey culminates in real-world impact. We create experiences where your audiences aren't just passive observers but active participants in something meaningful—the ultimate expression of your vision.",
     skills: [
       "Event planning",
       "Experience design",
