@@ -8,22 +8,22 @@ import Link from "next/link"
 
 const projects = [
   {
+    title: "esboço ternurento",
+    category: "webdesign, social media, digitalization",
+    description:
+      "Construction and interior design with unparalleled sophistication, transforming spaces into unique experiences.",
+    image: "/projects/esboco.png",
+    client: "Pérola de Esmalte",
+    year: "2025",
+    url: "https://outplay.pt",
+  },
+  {
     title: "veto",
     category: "webdesign, webdevelopment",
     description:
       "Platform using Portugal's Parliament open data to improve citizen access to legislative information.",
     image: "/projects/veto.png",
     client: "OUTPLAY",
-    year: "2025",
-    url: "https://veto.pt",
-  },
-  {
-    title: "pérola de esmalte",
-    category: "webdesign, webdevelopment",
-    description:
-      "A dental clinic with a touch of elegance and sophistication based in Lousada, Porto.",
-    image: "/projects/perola.png",
-    client: "Pérola de Esmalte",
     year: "2025",
     url: "https://veto.pt",
   },

@@ -12,7 +12,6 @@ const skillCategories = [
       "Every journey begins with resources. We find the angles others miss, turning technically sound proposals into compelling narratives that stand out to evaluators and secure the funding that fuels your vision.",
     skills: [
       "Erasmus+ proposals",
-      "Interreg applications",
       "Horizon Europe submissions",
       "Portugal 2030 funding",
       "Project conceptualization",
