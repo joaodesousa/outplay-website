@@ -9,6 +9,7 @@ export function Manifesto() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeRule, setActiveRule] = useState<number | null>(null)
   const [isGlitching, setIsGlitching] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   // Scroll-based animations
   const { scrollYProgress } = useScroll({
@@ -16,11 +17,20 @@ export function Manifesto() {
     offset: ["start end", "end start"],
   })
 
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100])
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
-
-  // Track mouse position for interactive effects
+  // Check if device is mobile
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Track mouse position for interactive effects - only on desktop
+  useEffect(() => {
+    if (isMobile) return
+
     const handleMouseMove = (e: MouseEvent) => {
       // Random glitch effect
       if (Math.random() > 0.995) {
@@ -31,7 +41,11 @@ export function Manifesto() {
 
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [])
+  }, [isMobile])
+
+  // Optimize scroll animations for mobile
+  const y = useTransform(scrollYProgress, [0, 1], [isMobile ? 50 : 100, isMobile ? -50 : -100])
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
 
   // Manifesto rules - our philosophical statements
 const rules = [
@@ -68,10 +82,10 @@ const rules = [
 
   return (
     <section id="manifesto" ref={containerRef} className="min-h-screen py-32 relative overflow-hidden">
-      {/* Background elements */}
+      {/* Background elements - simplified for mobile */}
       <motion.div className="absolute inset-0 pointer-events-none z-[-1] opacity-20" style={{ y, opacity }}>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-gray-800 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-gray-800 blur-3xl" />
+        <div className={`absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-gray-800 ${isMobile ? 'blur-xl' : 'blur-3xl'}`} />
+        <div className={`absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-gray-800 ${isMobile ? 'blur-xl' : 'blur-3xl'}`} />
       </motion.div>
 
       <div className="container mx-auto px-6 md:px-12">
@@ -80,7 +94,7 @@ const rules = [
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: isMobile ? 0.5 : 0.8 }}
         >
           <div className="w-3 h-3 bg-white rounded-full mr-8" />
           <h2 className="text-5xl md:text-6xl font-bold">Our Manifesto</h2>
@@ -95,7 +109,7 @@ const rules = [
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
+              transition={{ duration: isMobile ? 0.5 : 0.8, delay: index * (isMobile ? 0.05 : 0.1) }}
             >
               <div
                 className={`cursor-pointer group transition-all duration-500 ${
@@ -108,10 +122,10 @@ const rules = [
                   <div className="flex-shrink-0">
                     <motion.div
                       className="text-7xl md:text-9xl font-bold text-white opacity-10 select-none"
-                      animate={{
+                      animate={!isMobile ? {
                         x: isGlitching ? Math.random() * 10 - 5 : 0,
                         y: isGlitching ? Math.random() * 10 - 5 : 0,
-                      }}
+                      } : undefined}
                     >
                       {rule.number}
                     </motion.div>
@@ -121,10 +135,10 @@ const rules = [
                     {/* Rule title */}
                     <motion.h3
                       className="text-3xl md:text-5xl font-bold mb-6 leading-tight"
-                      animate={{
+                      animate={!isMobile ? {
                         x: isGlitching ? Math.random() * 5 - 2.5 : 0,
                         y: isGlitching ? Math.random() * 5 - 2.5 : 0,
-                      }}
+                      } : undefined}
                     >
                       {rule.title}
                     </motion.h3>
