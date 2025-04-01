@@ -61,7 +61,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-lg font-medium mb-6">contact</h3>
-            <p className="text-gray-400 mb-2">+351 256 197 889</p>
+            <p className="text-gray-400 mb-2">+351 969 179 179</p>
             <p className="text-gray-400">hello@outplay.pt</p>
           </div>
 
