@@ -184,7 +184,7 @@ const rules = [
           transition={{ duration: 0.8 }}
         >
           <p className="text-2xl md:text-3xl font-light mb-8 max-w-3xl mx-auto">
-            Ready to break rules with us and transform how your science is communicated?
+          Ready to write new rules and explore what's possible?
           </p>
 
           <Link href="/contact">
