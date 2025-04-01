@@ -8,44 +8,67 @@ export function Cursor() {
   const [hidden, setHidden] = useState(true)
   const [clicked, setClicked] = useState(false)
   const [linkHovered, setLinkHovered] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const updatePosition = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY })
-      setHidden(false)
+    // Check if device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches)
     }
+    
+    // Initial check
+    checkMobile()
+    
+    // Listen for resize events
+    window.addEventListener("resize", checkMobile)
 
-    const handleMouseDown = () => setClicked(true)
-    const handleMouseUp = () => setClicked(false)
+    // Only add cursor events if not mobile
+    if (!isMobile) {
+      const updatePosition = (e: MouseEvent) => {
+        setPosition({ x: e.clientX, y: e.clientY })
+        setHidden(false)
+      }
 
-    const handleLinkHoverStart = () => setLinkHovered(true)
-    const handleLinkHoverEnd = () => setLinkHovered(false)
+      const handleMouseDown = () => setClicked(true)
+      const handleMouseUp = () => setClicked(false)
 
-    window.addEventListener("mousemove", updatePosition)
-    window.addEventListener("mousedown", handleMouseDown)
-    window.addEventListener("mouseup", handleMouseUp)
-    window.addEventListener("mouseleave", () => setHidden(true))
-    window.addEventListener("mouseenter", () => setHidden(false))
+      const handleLinkHoverStart = () => setLinkHovered(true)
+      const handleLinkHoverEnd = () => setLinkHovered(false)
 
-    const links = document.querySelectorAll("a, button")
-    links.forEach((link) => {
-      link.addEventListener("mouseenter", handleLinkHoverStart)
-      link.addEventListener("mouseleave", handleLinkHoverEnd)
-    })
+      window.addEventListener("mousemove", updatePosition)
+      window.addEventListener("mousedown", handleMouseDown)
+      window.addEventListener("mouseup", handleMouseUp)
+      window.addEventListener("mouseleave", () => setHidden(true))
+      window.addEventListener("mouseenter", () => setHidden(false))
+
+      const links = document.querySelectorAll("a, button")
+      links.forEach((link) => {
+        link.addEventListener("mouseenter", handleLinkHoverStart)
+        link.addEventListener("mouseleave", handleLinkHoverEnd)
+      })
+
+      return () => {
+        window.removeEventListener("mousemove", updatePosition)
+        window.removeEventListener("mousedown", handleMouseDown)
+        window.removeEventListener("mouseup", handleMouseUp)
+        window.removeEventListener("mouseleave", () => setHidden(true))
+        window.removeEventListener("mouseenter", () => setHidden(false))
+        window.removeEventListener("resize", checkMobile)
+
+        links.forEach((link) => {
+          link.removeEventListener("mouseenter", handleLinkHoverStart)
+          link.removeEventListener("mouseleave", handleLinkHoverEnd)
+        })
+      }
+    }
 
     return () => {
-      window.removeEventListener("mousemove", updatePosition)
-      window.removeEventListener("mousedown", handleMouseDown)
-      window.removeEventListener("mouseup", handleMouseUp)
-      window.removeEventListener("mouseleave", () => setHidden(true))
-      window.removeEventListener("mouseenter", () => setHidden(false))
-
-      links.forEach((link) => {
-        link.removeEventListener("mouseenter", handleLinkHoverStart)
-        link.removeEventListener("mouseleave", handleLinkHoverEnd)
-      })
+      window.removeEventListener("resize", checkMobile)
     }
-  }, [])
+  }, [isMobile])
+
+  // Don't render the cursor on mobile devices
+  if (isMobile) return null
 
   const cursorVariants = {
     default: {
