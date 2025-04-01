@@ -98,8 +98,10 @@ export function Hero() {
   const scrollToNextSection = () => {
     const nextSection = document.getElementById("portfolio")
     if (nextSection) {
+      const yOffset = -80 // Offset to account for any fixed headers
+      const y = nextSection.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({
-        top: nextSection.offsetTop,
+        top: y,
         behavior: "smooth",
       })
     }
@@ -185,22 +187,24 @@ export function Hero() {
       </div>
 
       {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.8 }}
-        onClick={scrollToNextSection}
-        style={{ opacity: contentOpacity }}
-      >
-        <p className="text-sm text-gray-400 mb-2">Scroll to explore</p>
+      <div className="absolute bottom-12 left-0 right-0 flex justify-center">
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
+          className="flex flex-col items-center cursor-pointer"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          onClick={scrollToNextSection}
+          style={{ opacity: contentOpacity }}
         >
-          <ChevronDown className="text-white" size={24} />
+          <p className="text-sm text-gray-400 mb-2">Scroll to explore</p>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
+          >
+            <ChevronDown className="text-white" size={24} />
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
 
       {/* Transition gradient */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent pointer-events-none" />
