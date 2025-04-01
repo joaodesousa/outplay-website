@@ -39,7 +39,7 @@ export function LoadingScreen() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-7xl md:text-9xl font-bold tracking-">
+            <h1 className="text-7xl md:text-9xl font-bold tracking-tight">
               {progress}% <span className="text-3xl md:text-5xl font-normal">changing the rules.</span>
             </h1>
           </motion.div>
