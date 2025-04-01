@@ -1,43 +1,41 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { X } from "lucide-react"
+import { ConversationItem } from "@/types/notion" // Import the type from your types file
 
-// Pre-generate random positions for dots to avoid hydration errors
-const randomDots = Array.from({ length: 50 }).map(() => ({
-  left: `${Math.floor(Math.random() * 100)}%`,
-  top: `${Math.floor(Math.random() * 100)}%`,
-  opacity: (Math.floor(Math.random() * 40) + 10) / 100,
-}))
+interface ContactPageProps {}
 
-export default function ContactPage() {
+export default function ContactPage({}: ContactPageProps) {
   // Track conversation state
-  const [conversation, setConversation] = useState<Array<{ type: "question" | "answer"; text: string }>>([
+  const [conversation, setConversation] = useState<ConversationItem[]>([
     { type: "question", text: "WHAT BRINGS YOU HERE?" },
   ])
-  const [currentAnswer, setCurrentAnswer] = useState("")
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [isComplete, setIsComplete] = useState(false)
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-  const [email, setEmail] = useState("")
-  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 }) // Default center position
+  const [currentAnswer, setCurrentAnswer] = useState<string>("")
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
+  const [isComplete, setIsComplete] = useState<boolean>(false)
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false)
+  const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false)
+  const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string>("")
+  const [email, setEmail] = useState<string>("")
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 50, y: 50 }) // Default center position
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   // Reference for auto-scrolling
   const conversationEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Questions flow
-  const questions = [
+  const questions: string[] = [
     "WHAT BRINGS YOU HERE?",
     "WHAT RULE DO YOU WANT TO BREAK?",
     "WHAT'S HOLDING YOU BACK?",
-    "HOW SHOULD WE CONTACT YOU?",
+    "WHAT SHOULD WE CALL YOU?",
+    "WHAT'S YOUR EMAIL?",
   ]
 
   // Track mouse position for background effect - client-side only
@@ -56,6 +54,12 @@ export default function ContactPage() {
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
+  // Add this new useEffect to ensure page starts at the top
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0)
+  }, [])
+
   // Handle key presses
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && currentAnswer.trim() !== "") {
@@ -68,7 +72,7 @@ export default function ContactPage() {
     // Add current answer to conversation
     setConversation((prev) => [...prev, { type: "answer", text: currentAnswer }])
 
-    // Check if this was the email question
+    // Check if this was the email question (last question)
     if (currentQuestionIndex === questions.length - 1) {
       setEmail(currentAnswer)
     }
@@ -96,6 +100,8 @@ export default function ContactPage() {
     setIsComplete(false)
     setShowConfirmation(false)
     setShowSuccessMessage(false)
+    setShowErrorMessage(false)
+    setErrorMessage("")
   }
 
   // Auto-scroll to bottom of conversation
@@ -106,25 +112,50 @@ export default function ContactPage() {
     }
   }, [conversation])
 
-  // Add this new useEffect to ensure page starts at the top
-  useEffect(() => {
-    // Scroll to top when component mounts
-    window.scrollTo(0, 0)
-  }, [])
-
-  // Submit the form data
-  const handleSubmit = () => {
-    // In a real implementation, you would send the conversation data to your backend
-    console.log("Submitting conversation:", conversation)
-    console.log("Contact email:", email)
-
-    // Show success message
-    setShowSuccessMessage(true)
-
-    // Reset after delay
-    setTimeout(() => {
-      resetConversation()
-    }, 5000)
+  // Submit the form data to the API
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true)
+      
+      // Prepare the data for submission
+      const contactData = {
+        conversation,
+        email,
+        source: 'contact_page'
+      }
+      
+      // Submit to our new API endpoint
+      const response = await fetch('/api/submit-contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        // Show success message
+        setShowSuccessMessage(true)
+        
+        // Reset after delay
+        setTimeout(() => {
+          resetConversation()
+        }, 5000)
+      } else {
+        // Show error message
+        setShowErrorMessage(true)
+        setErrorMessage(result.error || 'Failed to submit contact information. Please try again.')
+      }
+    } catch (error) {
+      // Handle any unexpected errors
+      setShowErrorMessage(true)
+      setErrorMessage('An unexpected error occurred. Please try again later.')
+      console.error('Error submitting contact form:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   // Close success message
@@ -132,9 +163,16 @@ export default function ContactPage() {
     setShowSuccessMessage(false)
     resetConversation()
   }
+  
+  // Close error message
+  const closeErrorMessage = () => {
+    setShowErrorMessage(false)
+  }
 
   return (
     <main className="bg-black text-white min-h-screen relative overflow-hidden" ref={containerRef}>
+      <Navigation />
+
       {/* Background elements */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         {/* Grid lines */}
@@ -192,12 +230,20 @@ export default function ContactPage() {
         <div className="absolute top-[60%] left-[70%] w-20 h-20 border border-gray-800 opacity-40 rotate-12" />
       </div>
 
-      <Navigation />
-
       <section className="min-h-[calc(100vh-200px)] flex flex-col relative z-10">
         {/* Conversation interface */}
         <div className="flex-1 pt-32 pb-8 px-6 md:px-12 overflow-y-auto">
           <div className="max-w-3xl mx-auto">
+            <motion.div
+              className="flex items-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="w-3 h-3 bg-white rounded-full mr-8" />
+              <h1 className="text-5xl md:text-6xl font-bold">Let's Talk</h1>
+            </motion.div>
+            
             <AnimatePresence mode="wait">
               {!showConfirmation ? (
                 <motion.div
@@ -205,6 +251,7 @@ export default function ContactPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
                   className="space-y-12"
                 >
                   {conversation.map((item, index) => (
@@ -258,13 +305,15 @@ export default function ContactPage() {
                   <div className="space-x-6">
                     <button
                       onClick={handleSubmit}
-                      className="px-8 py-4 bg-white text-black font-bold hover:bg-gray-200 transition-colors"
+                      disabled={isSubmitting}
+                      className="px-8 py-4 bg-white text-black font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      SEND MESSAGE
+                      {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
                     </button>
                     <button
                       onClick={resetConversation}
-                      className="px-8 py-4 border border-white hover:bg-white hover:text-black transition-colors"
+                      disabled={isSubmitting}
+                      className="px-8 py-4 border border-white hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       START OVER
                     </button>
@@ -294,7 +343,7 @@ export default function ContactPage() {
         )}
       </section>
 
-      {/* Custom success message */}
+      {/* Success message */}
       <AnimatePresence>
         {showSuccessMessage && (
           <motion.div
@@ -343,8 +392,52 @@ export default function ContactPage() {
         )}
       </AnimatePresence>
 
+      {/* Error message */}
+      <AnimatePresence>
+        {showErrorMessage && (
+          <motion.div
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80 backdrop-blur-sm px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div
+              className="relative bg-black border-l-4 border-red-500 p-8 max-w-xl w-full"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <button
+                onClick={closeErrorMessage}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="mb-6">
+                <div className="w-16 h-1 bg-red-500 mb-6" />
+                <h3 className="text-3xl font-bold mb-4">ERROR</h3>
+                <p className="text-gray-400">
+                  {errorMessage || "Something went wrong. Please try again."}
+                </p>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  onClick={closeErrorMessage}
+                  className="px-6 py-3 border border-white hover:bg-white hover:text-black transition-colors"
+                >
+                  CLOSE
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </main>
   )
 }
-
