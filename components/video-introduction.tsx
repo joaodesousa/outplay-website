@@ -170,7 +170,6 @@ export function VideoIntroduction({ onClose, youtubeVideoId }: VideoIntroduction
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1, duration: 0.5 }}
                 >
-                  <span className="text-white font-medium">OUTPLAY Presentation</span>
                 </motion.div>
                 
                 <button 
