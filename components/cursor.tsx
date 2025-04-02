@@ -72,28 +72,28 @@ export function Cursor() {
 
   const cursorVariants = {
     default: {
-      width: 32,
-      height: 32,
-      backgroundColor: "rgba(255, 255, 255, 0.2)",
-      border: "1px solid rgba(255, 255, 255, 0.5)",
-      x: position.x - 16,
-      y: position.y - 16,
-    },
-    link: {
-      width: 64,
-      height: 64,
-      backgroundColor: "rgba(255, 255, 255, 0.1)",
-      border: "1px solid rgba(255, 255, 255, 0.8)",
-      x: position.x - 32,
-      y: position.y - 32,
-    },
-    clicked: {
       width: 24,
       height: 24,
-      backgroundColor: "rgba(255, 255, 255, 0.6)",
-      border: "1px solid rgba(255, 255, 255, 0.8)",
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      border: "1px solid rgba(255, 255, 255, 0.5)",
       x: position.x - 12,
       y: position.y - 12,
+    },
+    link: {
+      width: 32,
+      height: 32,
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      border: "1px solid rgba(255, 255, 255, 0.8)",
+      x: position.x - 18,
+      y: position.y - 18,
+    },
+    clicked: {
+      width: 18,
+      height: 18,
+      backgroundColor: "rgba(255, 255, 255, 0.6)",
+      border: "1px solid rgba(255, 255, 255, 0.8)",
+      x: position.x - 9,
+      y: position.y - 9,
     },
   }
 

@@ -131,11 +131,11 @@ export function Contact() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6">
-              Let's craft <span className="font-bold">your</span>
+              Ready to <span className="font-bold">write</span>
               <br />
-              <span className="font-bold">perfect</span>
+              <span className="font-bold">new rules</span>
               <br />
-              <span className="font-bold">story</span>?
+              <span className="font-bold">together</span>?
             </h2>
           </motion.div>
           

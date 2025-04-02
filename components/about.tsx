@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
 
@@ -32,10 +32,18 @@ const teamMembers = [
 export function About() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeTab, setActiveTab] = useState("mission")
+  const [windowWidth, setWindowWidth] = useState(0)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   })
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const y = useTransform(scrollYProgress, [0, 1], [100, -100])
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
@@ -201,7 +209,7 @@ export function About() {
           <motion.div
             className="flex space-x-8 pb-8"
             drag="x"
-            dragConstraints={{ right: 0, left: -(teamMembers.length * 320 - window.innerWidth + 48) }}
+            dragConstraints={{ right: 0, left: -(teamMembers.length * 320 - windowWidth + 48) }}
             initial={{ x: 100, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
             viewport={{ once: true }}
