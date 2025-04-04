@@ -21,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" >
-      
+      <head>
+      <script defer src="https://umami.outplay.cloud/script.js" data-website-id="1b732a89-fbdd-4925-ab77-1aa38357fc4f"></script>
+      </head>
       <body className="bg-black text-white">
         {children}
         <Cursor />
