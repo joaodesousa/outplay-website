@@ -135,7 +135,7 @@ export function Footer() {
           <div className="flex flex-col justify-between h-full">
             <h3 className="text-lg font-medium mb-6">social media</h3>
             <div className="flex space-x-4">
-              <Link href="https://instagram.com/outplay.pt" target="_blank"><Instagram strokeWidth={1.5} /></Link>
+              <Link href="https://instagram.com/outplaypt" target="_blank"><Instagram strokeWidth={1.5} /></Link>
               <Link href="https://linkedin.com/company/outplaypt" target="_blank"><Linkedin strokeWidth={1.5} /></Link>
             </div>
           </div>

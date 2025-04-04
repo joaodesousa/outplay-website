@@ -140,7 +140,7 @@ export function Navigation() {
                     <h3 className="text-lg font-bold mb-4 uppercase tracking-wider">Follow Us</h3>
                     <div className="flex space-x-6">
                       {[
-                        { name: "instagram", handle:"outplay.pt", icon: <Instagram size={20} /> },
+                        { name: "instagram", handle:"outplaypt", icon: <Instagram size={20} /> },
                         { name: "linkedin", handle:"company/outplaypt", icon: <Linkedin size={20} /> },
                       ].map((social) => (
                         <Link
@@ -193,7 +193,7 @@ export function Navigation() {
                     <h3 className="text-lg font-bold mb-6 uppercase tracking-wider">Follow Us</h3>
                     <div className="flex space-x-6">
                       {[
-                        { name: "instagram", handle:"outplay.pt", icon: <Instagram size={20} /> },
+                        { name: "instagram", handle:"", icon: <Instagram size={20} /> },
                         { name: "linkedin", handle:"company/outplaypt", icon: <Linkedin size={20} /> },
                       ].map((social) => (
                         <Link
