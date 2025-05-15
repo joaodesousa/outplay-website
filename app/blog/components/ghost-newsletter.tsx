@@ -17,13 +17,13 @@ export function GhostNewsletter() {
     setErrorMessage('')
 
     try {
-      // Use Ghost Members API endpoint instead of your custom endpoint
-      const response = await fetch('/api/subscribe', {
+      // Use Resend API endpoint
+      const response = await fetch('/api/newsletter-resend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, source: 'ghost_newsletter' }),
       })
 
       const result = await response.json()
@@ -38,7 +38,7 @@ export function GhostNewsletter() {
         }, 3000)
       } else {
         setStatus('error')
-        setErrorMessage(result.message || 'Subscription failed')
+        setErrorMessage(result.error || 'Subscription failed')
       }
     } catch (error) {
       setStatus('error')

@@ -145,16 +145,14 @@ const ComingSoonPage = () => {
     setLastSubmission(now);
     
     try {
-      // Send the email to Notion database using the Notion API
-      const response = await fetch('/api/submit-email', {
+      // Send the email using Resend API
+      const response = await fetch('/api/newsletter-resend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
           email,
-          // Adding timestamp helps track submission patterns
-          timestamp: new Date().toISOString(),
           // Add a source for analytics
           source: 'coming-soon-page' 
         }),
@@ -170,8 +168,8 @@ const ComingSoonPage = () => {
         }, 3000);
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Failed to submit email. Please try again.');
-        console.error('Failed to submit email to Notion');
+        setErrorMessage(errorData.error || 'Failed to submit email. Please try again.');
+        console.error('Failed to submit email');
       }
     } catch (error) {
       setErrorMessage('An error occurred. Please try again later.');

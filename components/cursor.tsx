@@ -67,9 +67,6 @@ export function Cursor() {
     }
   }, [isMobile])
 
-  // Don't render the cursor on mobile devices
-  if (isMobile) return null
-
   const cursorVariants = {
     default: {
       width: 24,
@@ -97,6 +94,11 @@ export function Cursor() {
     },
   }
 
+  // For mobile devices, render an empty div with the same className to maintain DOM structure
+  if (isMobile) {
+    return <div className="fixed top-0 left-0 rounded-full pointer-events-none z-50 mix-blend-difference" style={{opacity: 0}} suppressHydrationWarning />
+  }
+
   return (
     <motion.div
       className="fixed top-0 left-0 rounded-full pointer-events-none z-50 mix-blend-difference"
@@ -104,6 +106,7 @@ export function Cursor() {
       animate={clicked ? "clicked" : linkHovered ? "link" : "default"}
       transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.5 }}
       style={{ opacity: hidden ? 0 : 1 }}
+      suppressHydrationWarning
     />
   )
 }

@@ -77,7 +77,9 @@ export default function Home() {
 
       <Navigation />
       <Hero />
-      <Manifesto />
+      <Projects />
+
+      {/* <Manifesto /> */}
       <Skills />
       <Contact />
       <Footer />

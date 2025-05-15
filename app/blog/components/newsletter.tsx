@@ -17,12 +17,12 @@ export function BlogNewsletter() {
     setErrorMessage('')
 
     try {
-      const response = await fetch('/api/submit-email', {
+      const response = await fetch('/api/newsletter-resend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, source: 'blog_newsletter' }),
       })
 
       const result = await response.json()
@@ -37,7 +37,7 @@ export function BlogNewsletter() {
         }, 3000)
       } else {
         setStatus('error')
-        setErrorMessage(result.message || 'Subscription failed')
+        setErrorMessage(result.error || 'Subscription failed')
       }
     } catch (error) {
       setStatus('error')

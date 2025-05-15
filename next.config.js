@@ -4,7 +4,7 @@ const nextConfig = {
       remotePatterns: [
         {hostname:'cms.outplay.cloud'},  
         {hostname:'images.unsplash.com'},
-        {hostname:'static.ghost.org'}
+        {hostname:'a.storyblok.com'}
       ]
     },
     // ...other configs

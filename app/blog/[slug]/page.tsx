@@ -3,53 +3,36 @@ import Link from "next/link"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Facebook, Twitter, Linkedin, Copy, ArrowLeft } from "lucide-react"
-import { getPostBySlug, getAllPosts } from "@/lib/ghost"
 import { BlogNewsletter } from "../components/newsletter"
-import { GhostContentRenderer } from "@/components/GhostContentRenderer"
 import { Metadata } from "next"
-
-interface Post {
-    slug: string;
-    title: string;
-    feature_image?: string;
-    custom_excerpt?: string;
-    excerpt?: string;
-    html?: string;
-    primary_tag?: {
-      id: string;
-      name: string;
-      slug: string;
-    };
-    primary_author?: {
-      name: string;
-      bio?: string;
-      profile_image?: string;
-    };
-    published_at: string;
-    tags: { 
-      id: string;
-      name: string; 
-      slug: string;
-    }[];
-}
+import { getStoryblokContent, getStoryblokStories } from "@/lib/storyblok"
+import { StoryblokComponent } from "@storyblok/react"
+import { richTextResolver } from "@storyblok/richtext"
+import { notFound } from "next/navigation"
+import { format } from "date-fns"
 
 export const dynamic = 'force-static';
 export const revalidate = 3600; // Revalidate every hour
 
-// Generate static params for all posts at build time
+// Generate static params for all blog posts
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
+  const posts = await getStoryblokStories({
+    starts_with: "blog/",
+  } as any);
   
-  return posts.map((post: Post) => ({
+  return posts.map((post: any) => ({
     slug: post.slug,
   }));
 }
 
 // Generate metadata for the page
-export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const post = await getPostBySlug((await props.params).slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  // Ensure params are awaited by using Promise.resolve
+  const resolvedParams = await params;
+  const { slug } = resolvedParams;
+  const story = await getStoryblokContent(`blog/${slug}`);
   
-  if (!post) {
+  if (!story) {
     return {
       title: 'Post Not Found',
       description: 'The post you are looking for could not be found.',
@@ -57,44 +40,48 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   }
   
   return {
-    title: `${post.title} | OUTPLAY Blog`,
-    description: post.custom_excerpt || post.excerpt || '',
-    openGraph: post.feature_image ? {
-      images: [{ url: post.feature_image }],
+    title: `${story.content.title} | OUTPLAY Blog`,
+    description: story.content.excerpt || '',
+    openGraph: story.content.featured_image ? {
+      images: [{ url: story.content.featured_image.filename }],
     } : undefined,
   };
 }
 
-export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
-  const post = await getPostBySlug((await props.params).slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  // Ensure params are awaited by using Promise.resolve
+  const resolvedParams = await params;
+  const { slug } = resolvedParams;
+  const story = await getStoryblokContent(`blog/${slug}`);
   
-  if (!post) {
-    // Handle not found case
-    return (
-      <main className="bg-black text-white min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
-          <p className="mb-8">The post you're looking for doesn't exist or may have been moved.</p>
-          <Link href="/blog" className="inline-flex items-center text-gray-400 hover:text-white transition-colors">
-            <ArrowLeft size={16} className="mr-2" />
-            Back to all articles
-          </Link>
-        </div>
-      </main>
-    );
+  if (!story) {
+    notFound();
   }
 
+  // Create richtext renderer with the correct type
+  const { render } = richTextResolver<string>();
+
   // Fetch related posts (e.g., with same tag)
-  let relatedPosts: Post[] = [];
-  if (post.primary_tag) {
-    const allPosts = await getAllPosts();
+  let relatedPosts: any[] = [];
+  if (story.content.tags && story.content.tags.length > 0) {
+    const allPosts = await getStoryblokStories({
+      starts_with: "blog/",
+      excluding_slugs: `blog/${slug}`,
+    } as any);
+    
     relatedPosts = allPosts
-      .filter((p: Post) => 
-        p.slug !== post.slug && 
-        p.tags?.some((tag: { id: string }) => tag.id === post.primary_tag?.id)
+      .filter((p: any) => 
+        p.content.tags && 
+        p.content.tags.some((tag: string) => 
+          story.content.tags.includes(tag)
+        )
       )
       .slice(0, 3);
   }
+
+  const formattedDate = story.content.publication_date
+    ? format(new Date(story.content.publication_date), "MMMM dd, yyyy")
+    : "";
 
   return (
     <main className="bg-black text-white min-h-screen">
@@ -114,46 +101,55 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
 
             <div className="mb-8">
               <span className="text-sm text-gray-400 uppercase tracking-wider">
-                {post.primary_tag?.name || "General"}
+                {story.content.tags && story.content.tags.length > 0 ? story.content.tags[0] : "General"}
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">{post.title}</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">{story.content.title}</h1>
 
-            <p className="text-xl text-gray-300 mb-12">{post.custom_excerpt || post.excerpt}</p>
+            <p className="text-xl text-gray-300 mb-12">{story.content.excerpt}</p>
 
             <div className="flex items-center justify-between mb-12">
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full bg-gray-800 mr-4 overflow-hidden">
-                  {post.primary_author?.profile_image && (
+                  {story.content.author && story.content.author.content && story.content.author.content.avatar ? (
                     <Image
-                      src={post.primary_author.profile_image}
-                      alt={post.primary_author.name}
+                      src={story.content.author.content.avatar.filename}
+                      alt={story.content.author.name}
                       width={48}
                       height={48}
                       className="w-full h-full object-cover"
                     />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      {(story.content.author ? story.content.author.name : "Unknown Author")?.charAt(0)}
+                    </div>
                   )}
                 </div>
                 <div>
-                  <p className="font-medium">{post.primary_author?.name}</p>
-                  <p className="text-sm text-gray-500">{post.primary_author?.bio?.substring(0, 60) || "Author"}</p>
+                  <p className="font-medium">{story.content.author ? story.content.author.name : "Unknown Author"}</p>
+                  <p className="text-xs text-gray-500">
+                    {story.content.author && story.content.author.content && 
+                     story.content.author.content.bio ? 
+                     render(story.content.author.content.bio).replace(/<[^>]*>?/gm, '').substring(0, 60) + '...' : "Author"}
+                  </p>
                 </div>
               </div>
 
               <div className="text-gray-500 text-sm">
-                {new Date(post.published_at).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {formattedDate}
               </div>
             </div>
           </div>
 
-          {post.feature_image && (
+          {story.content.featured_image && (
             <div className="relative aspect-[21/9] mb-16 overflow-hidden">
-              <Image src={post.feature_image} alt={post.title} fill className="object-cover" />
+              <Image 
+                src={story.content.featured_image.filename} 
+                alt={story.content.title} 
+                fill 
+                className="object-cover" 
+              />
             </div>
           )}
         </div>
@@ -183,24 +179,26 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
 
             {/* Main Content */}
             <div className="lg:col-span-8">
-              <article>
-                <GhostContentRenderer 
-                  content={post.html || ''} 
-                  className="max-w-none" 
-                />
-              </article>
+              {/* Render just the content field, not the entire blok */}
+              {story.content.content && (
+                <div className="prose prose-lg prose-invert max-w-none">
+                  <div dangerouslySetInnerHTML={{ 
+                    __html: render(story.content.content) 
+                  }}></div>
+                </div>
+              )}
 
               {/* Tags */}
-              {post.tags && post.tags.length > 0 && (
+              {story.content.tags && story.content.tags.length > 0 && (
                 <div className="mt-12 pt-12 border-t border-gray-900">
                   <div className="flex flex-wrap gap-3">
-                    {post.tags.map((tag: { id: string; slug: string; name: string }) => (
+                    {story.content.tags.map((tag: string, index: number) => (
                       <Link
-                        key={tag.id}
-                        href={`/blog/tag/${tag.slug}`}
+                        key={index}
+                        href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
                         className="px-4 py-2 text-sm border border-gray-800 text-gray-400 hover:border-white hover:text-white transition-colors"
                       >
-                        {tag.name}
+                        {tag}
                       </Link>
                     ))}
                   </div>
@@ -208,23 +206,34 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
               )}
 
               {/* Author Bio */}
-              {post.primary_author && (
+              {story.content.author && (
                 <div className="mt-12 pt-12 border-t border-gray-900">
                   <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                     <div className="w-20 h-20 rounded-full bg-gray-800 overflow-hidden flex-shrink-0">
-                      {post.primary_author.profile_image && (
+                      {story.content.author.content && story.content.author.content.avatar ? (
                         <Image
-                          src={post.primary_author.profile_image}
-                          alt={post.primary_author.name}
+                          src={story.content.author.content.avatar.filename}
+                          alt={story.content.author.name}
                           width={80}
                           height={80}
                           className="w-full h-full object-cover"
                         />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl">
+                          {story.content.author.name?.charAt(0)}
+                        </div>
                       )}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold mb-2">{post.primary_author.name}</h3>
-                      <p className="text-gray-400 mb-4">{post.primary_author.bio}</p>
+                      <h3 className="text-xl font-bold mb-2">{story.content.author.name}</h3>
+                      {story.content.author.content && 
+                       story.content.author.content.bio && (
+                        <div className="text-gray-400 mb-4 prose prose-invert max-w-none">
+                          <div dangerouslySetInnerHTML={{ 
+                            __html: render(story.content.author.content.bio) 
+                          }}></div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -246,62 +255,71 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
             <h2 className="text-3xl font-bold mb-12">Related Articles</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {relatedPosts.map((relatedPost, index) => (
-                <article key={index} className="flex flex-col h-full">
-                  <div className="relative aspect-[4/3] mb-6 overflow-hidden group">
-                    <Image
-                      src={relatedPost.feature_image || "/placeholder.svg?height=600&width=800"}
-                      alt={relatedPost.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <span className="text-xs text-gray-400 uppercase tracking-wider">
-                      {relatedPost.primary_tag?.name || "General"}
-                    </span>
-                  </div>
-
-                  <Link href={`/blog/${relatedPost.slug}`} className="mb-3">
-                    <h3 className="text-xl font-bold hover:text-gray-300 transition-colors duration-300">
-                      {relatedPost.title}
-                    </h3>
-                  </Link>
-
-                  <p className="text-gray-400 text-sm mb-6">{relatedPost.excerpt}</p>
-
-                  <div className="flex items-center mt-auto">
-                    <div className="w-8 h-8 rounded-full bg-gray-800 mr-3 overflow-hidden">
-                      {relatedPost.primary_author?.profile_image ? (
+              {relatedPosts.map((relatedPost, index) => {
+                const postDate = relatedPost.content.publication_date
+                  ? format(new Date(relatedPost.content.publication_date), "MMMM dd, yyyy")
+                  : "";
+                
+                return (
+                  <article key={index} className="flex flex-col h-full">
+                    <div className="relative aspect-[4/3] mb-6 overflow-hidden group">
+                      {relatedPost.content.featured_image ? (
                         <Image
-                          src={relatedPost.primary_author.profile_image}
-                          alt={relatedPost.primary_author.name || "Author"}
-                          width={32}
-                          height={32}
-                          className="object-cover"
+                          src={relatedPost.content.featured_image.filename}
+                          alt={relatedPost.content.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                          {relatedPost.primary_author?.name?.charAt(0) || "?"}
+                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                          <span className="text-gray-600">No image</span>
                         </div>
                       )}
                     </div>
-                    <div>
-                      <p className="text-xs font-medium">
-                        {relatedPost.primary_author?.name || "Unknown Author"}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(relatedPost.published_at).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </p>
+
+                    <div className="mb-3">
+                      <span className="text-xs text-gray-400 uppercase tracking-wider">
+                        {relatedPost.content.tags && relatedPost.content.tags.length > 0 
+                          ? relatedPost.content.tags[0] 
+                          : "General"}
+                      </span>
                     </div>
-                  </div>
-                </article>
-              ))}
+
+                    <Link href={`/blog/${relatedPost.slug}`} className="mb-3">
+                      <h3 className="text-xl font-bold hover:text-gray-300 transition-colors duration-300">
+                        {relatedPost.content.title}
+                      </h3>
+                    </Link>
+
+                    <p className="text-gray-400 text-sm mb-6">{relatedPost.content.excerpt}</p>
+
+                    <div className="flex items-center mt-auto">
+                      <div className="w-8 h-8 rounded-full bg-gray-800 mr-3 overflow-hidden">
+                        {relatedPost.content.author && relatedPost.content.author.content && 
+                         relatedPost.content.author.content.avatar ? (
+                          <Image
+                            src={relatedPost.content.author.content.avatar.filename}
+                            alt={relatedPost.content.author.name || "Author"}
+                            width={32}
+                            height={32}
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                            {relatedPost.content.author?.name?.charAt(0) || "?"}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium">
+                          {relatedPost.content.author?.name || "Unknown Author"}
+                        </p>
+                        <p className="text-xs text-gray-500">{postDate}</p>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>

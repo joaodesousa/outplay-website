@@ -35,6 +35,7 @@ export function Navigation() {
             {[
               { name: "manifesto", href: "/#manifesto" },
               { name: "what we do", href: "/#skills" },
+              { name: "blog", href: "/blog" },
               { name: "about", href: "/about" },
               { name: "contact", href: "/contact" },
             ].map((item) => (
@@ -101,6 +102,7 @@ export function Navigation() {
                      { name: "about", href: "/about" },
                      { name: "manifesto", href: "/#manifesto" },
                      { name: "what we do", href: "/#skills" },
+                     { name: "blog", href: "/blog" },
                      { name: "contact", href: "/contact" },
                     ].map((item) => (
                       <li key={item.name}>
@@ -227,6 +229,7 @@ export function Navigation() {
                         { name: "about", href: "/about" },
                         { name: "manifesto", href: "/#manifesto" },
                         { name: "what we do", href: "/#skills" },
+                        { name: "blog", href: "/blog" },
                         { name: "contact", href: "/contact" },
                       ].map((item) => (
                         <li key={item.name}>

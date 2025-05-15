@@ -33,7 +33,7 @@ export function Footer() {
     setStatus("loading");
 
     try {
-      const response = await fetch("/api/newsletter-subscribe", {
+      const response = await fetch("/api/newsletter-resend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, source: "website_footer" }),
@@ -43,14 +43,8 @@ export function Footer() {
 
       if (response.ok) {
         setStatus("success");
-        
-        // Check if it's a "already subscribed" message or a new subscription
-        if (result.message) {
-          setMessage(result.message);
-        } else {
-          setMessage("Subscribed successfully!");
-          setEmail(""); // Only clear input for new subscriptions
-        }
+        setMessage("Subscribed successfully!");
+        setEmail(""); // Clear input for new subscriptions
       } else {
         setStatus("error");
         setMessage(result.error || "Subscription failed. Please try again.");

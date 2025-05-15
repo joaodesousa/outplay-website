@@ -1,56 +1,104 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { getStoryblokApi } from "@storyblok/react"
 
-const projects = [
-  {
-    title: "esboço ternurento",
-    category: "webdesign, social media, digitalization",
-    description:
-      "Construction and interior design with unparalleled sophistication, transforming spaces into unique experiences.",
-    image: "/projects/esboco.png",
-    client: "Pérola de Esmalte",
-    year: "2025",
-    url: "https://outplay.pt",
-  },
-  {
-    title: "veto",
-    category: "webdesign, webdevelopment",
-    description:
-      "Platform using Portugal's Parliament open data to improve citizen access to legislative information.",
-    image: "/projects/veto.png",
-    client: "OUTPLAY",
-    year: "2025",
-    url: "https://veto.pt",
-  },
-  {
-    title: "reculture",
-    category: "communication, dissemination, webdesign",
-    description:
-      "Taking advantage of sports as an universal language for the integration of young migrants.",
-    image: "/placeholder.svg?height=800&width=1200",
-    client: "Erasmus+",
-    year: "2020",
-    url: "https://reculture-project.eu",
-  },
-  {
-    title: "rural jump-start",
-    category: "communication, dissemination, webdesign",
-    description:
-      "Empowering young entrepreneurs in rural areas to help them create their own businesses.",
-    image: "/placeholder.svg?height=800&width=1200",
-    client: "Erasmus+",
-    year: "2021",
-    url: "https://ruraljumpstart.eu",
-  },
-]
+interface Project {
+  title: string
+  category: string[] | string
+  description: string
+  image: string
+  client: string
+  year: string
+  url: string
+}
 
 export function Projects() {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const fetchProjects = async () => {
+    try {
+      setIsLoading(true)
+      const storyblokApi = getStoryblokApi()
+      
+      if (!storyblokApi) {
+        console.error("Storyblok API is not initialized")
+        setIsLoading(false)
+        return
+      }
+      
+      const { data } = await storyblokApi.get("cdn/stories", {
+        version: "published",
+        starts_with: "projects/",
+      })
+
+      if (data && data.stories && data.stories.length > 0) {
+        const formattedProjects = data.stories.map((story: any) => {
+          const content = story.content;
+          
+          return {
+            title: content.title || "",
+            // Handle category as either string or array
+            category: Array.isArray(content.category) 
+              ? content.category.join(", ") 
+              : content.category || "",
+            description: content.description || "",
+            // Handle image format from Storyblok
+            image: content.image?.filename || "/placeholder.svg?height=800&width=1200",
+            client: content.client || "",
+            year: content.year || "",
+            // Handle URL object structure
+            url: content.url?.cached_url || content.url?.url || "#",
+          }
+        });
+        
+        setProjects(formattedProjects);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchProjects()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <section id="portfolio" className="py-32">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="flex items-center mb-24">
+            <div className="w-3 h-3 bg-white rounded-full mr-8" />
+            <h2 className="text-5xl md:text-6xl font-bold">things we did</h2>
+          </div>
+          <p className="text-center text-gray-300">Loading projects...</p>
+        </div>
+      </section>
+    )
+  }
+
+  // If no projects are found
+  if (projects.length === 0) {
+    return (
+      <section id="portfolio" className="py-32">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="flex items-center mb-24">
+            <div className="w-3 h-3 bg-white rounded-full mr-8" />
+            <h2 className="text-5xl md:text-6xl font-bold">things we did</h2>
+          </div>
+          <p className="text-center text-gray-300">No projects found.</p>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section id="portfolio" className="py-32">
@@ -104,59 +152,61 @@ export function Projects() {
 
           {/* Project details on the right */}
           <div className="lg:col-span-8 xl:col-span-9">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="h-full"
-              >
-                <div className="relative aspect-[16/9] mb-8 overflow-hidden">
-                  <Image
-                    src={projects[activeIndex].image || "/placeholder.svg"}
-                    alt={projects[activeIndex].title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-                  <div className="md:col-span-8">
-                    <h3 className="text-3xl font-bold mb-4">{projects[activeIndex].title}</h3>
-                    <p className="text-gray-300 text-lg mb-6">{projects[activeIndex].description}</p>
-                    <motion.button
-                      className="flex items-center space-x-2 text-white group"
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                    >
-                      <Link href={projects[activeIndex].url}>
-                      <span>View project</span>
-                      </Link>
-                      <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-200" />
-                    </motion.button>
+            {projects.length > 0 && (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="h-full"
+                >
+                  <div className="relative aspect-[16/9] mb-8 overflow-hidden">
+                    <Image
+                      src={projects[activeIndex].image}
+                      alt={projects[activeIndex].title}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
 
-                  <div className="md:col-span-4">
-                    <div className="space-y-6">
-                      <div>
-                        <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Client</h4>
-                        <p className="text-white">{projects[activeIndex].client}</p>
-                      </div>
-                      <div>
-                        <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Year</h4>
-                        <p className="text-white">{projects[activeIndex].year}</p>
-                      </div>
-                      <div>
-                        <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Category</h4>
-                        <p className="text-white">{projects[activeIndex].category}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    <div className="md:col-span-8">
+                      <h3 className="text-3xl font-bold mb-4">{projects[activeIndex].title}</h3>
+                      <p className="text-gray-300 text-lg mb-6">{projects[activeIndex].description}</p>
+                      <motion.button
+                        className="flex items-center space-x-2 text-white group"
+                        whileHover={{ x: 5 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        <Link href={projects[activeIndex].url}>
+                        <span>View project</span>
+                        </Link>
+                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-200" />
+                      </motion.button>
+                    </div>
+
+                    <div className="md:col-span-4">
+                      <div className="space-y-6">
+                        <div>
+                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Client</h4>
+                          <p className="text-white">{projects[activeIndex].client}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Year</h4>
+                          <p className="text-white">{projects[activeIndex].year}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Category</h4>
+                          <p className="text-white">{projects[activeIndex].category}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
         </div>
       </div>
