@@ -1,12 +1,14 @@
 // app/api/submit-email/route.js
-import { Client } from '@notionhq/client';
+import { Resend } from 'resend';
+import StoryblokClient from 'storyblok-js-client';
 
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_SECRET_KEY,
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Initialize Storyblok Management API client
+const Storyblok = new StoryblokClient({
+  oauthToken: process.env.STORYBLOK_OAUTH_TOKEN,
 });
-
-const databaseId = process.env.NOTION_DATABASE_ID;
 
 // Rate limiting storage (in memory - will reset on server restart)
 // For production, consider using Redis or another persistent store
@@ -88,19 +90,15 @@ export async function POST(request) {
       });
     }
 
-    // Check if email exists in database already
+    // Check if email exists in Storyblok
     try {
-      const existingResults = await notion.databases.query({
-        database_id: databaseId,
-        filter: {
-          property: 'Name',
-          title: {
-            equals: email
-          }
-        }
-      });
+      const subscriberSlug = email.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
       
-      if (existingResults.results.length > 0) {
+      const existingSubscriber = await Storyblok.get(`cdn/stories/subscribers/${subscriberSlug}`, {
+        version: 'draft'
+      }).catch(() => null);
+      
+      if (existingSubscriber && existingSubscriber.data && existingSubscriber.data.story) {
         // Email already exists
         return new Response(JSON.stringify({ 
           message: 'You\'re already on our list. Thank you!' 
@@ -114,48 +112,57 @@ export async function POST(request) {
       // Continue with submission anyway
     }
 
-    // Add the email to the Notion database
-    // Only use the Name and Created at properties which should exist in your database
-    const response = await notion.pages.create({
-      parent: {
-        database_id: databaseId,
-      },
-      properties: {
-        // Use the title property (assuming Name is the title property in your database)
-        Name: {
-          title: [
-            {
-              text: {
-                content: email,
-              },
-            },
-          ],
-        },
-        // Add submission date - this assumes you have a "Created at" property with a date type
-        // If you don't have this property, you can remove this section
-        "Created at": {
-          date: {
-            start: new Date().toISOString(),
+    // Add the email to Storyblok
+    try {
+      const subscriberSlug = email.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+      
+      await Storyblok.post(`spaces/${process.env.STORYBLOK_SPACE_ID}/stories`, {
+        story: {
+          name: email,
+          slug: subscriberSlug,
+          content: {
+            component: 'subscriber',
+            email: email,
+            subscribed_at: new Date().toISOString(),
           },
-        }
-      },
-    });
+          parent_id: process.env.STORYBLOK_SUBSCRIBERS_FOLDER_ID,
+          is_startpage: false,
+        },
+        publish: 1
+      });
+
+      // Send welcome email
+      await resend.emails.send({
+        from: `OUTPLAY <${process.env.RESEND_FROM_EMAIL}>`,
+        to: email,
+        subject: 'Welcome to Outplay!',
+        html: `
+          <div>
+            <h1>Thank you for subscribing!</h1>
+            <p>We're excited to have you join our community.</p>
+          </div>
+        `,
+      });
+    } catch (error) {
+      console.error('Error creating subscriber:', error);
+      // Handle error but don't expose details to client
+    }
 
     // Track this submission for rate limiting
     const currentSubmissions = ipSubmissions.get(ip) || [];
     currentSubmissions.push(now);
     ipSubmissions.set(ip, currentSubmissions);
 
-    return new Response(JSON.stringify({ success: true, id: response.id }), {
+    return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
       },
     });
   } catch (error) {
-    console.error('Error saving to Notion:', error);
+    console.error('Error processing submission:', error);
     return new Response(JSON.stringify({ 
-      error: 'Failed to save to Notion', 
+      error: 'Server error', 
       details: error.message 
     }), {
       status: 500,

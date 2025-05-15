@@ -3,46 +3,58 @@ import Link from "next/link"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { ArrowLeft } from "lucide-react"
-import { getPostsByTag } from "@/lib/ghost"
-import { BlogNewsletter } from "../../components/newsletter"
+import { getStoryblokStories } from "@/lib/storyblok"
+import { StoryblokNewsletter } from "../../components/storyblok-newsletter"
 import { Metadata } from "next"
+import { format } from "date-fns"
 
 interface Post {
+  uuid: string;
   slug: string;
-  title: string;
-  feature_image?: string;
-  custom_excerpt?: string;
-  excerpt?: string;
-  authors?: {
-    name: string;
-    profile_image?: string;
-  }[];
-  published_at: string;
-  tags: { name: string }[];
+  content: {
+    title: string;
+    featured_image?: { filename: string };
+    excerpt?: string;
+    publication_date: string;
+    author?: { 
+      name: string;
+      content?: {
+        avatar?: { filename: string }
+      }
+    };
+    tags?: string[];
+  };
 }
 
 export const revalidate = 3600; // Revalidate every hour
 
 // Generate metadata for the page
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const params = await props.params;
-  // Properly await the slug parameter
-  const slug = await params.slug;
-  const posts = await getPostsByTag(slug);
-  const tagName = posts.length > 0 ? posts[0].tags[0]?.name : slug;
-
+  const resolvedParams = await props.params;
+  const { slug } = resolvedParams;
+  const tagName = decodeURIComponent(slug);
+  
   return {
     title: `${tagName} | OUTPLAY Blog`,
     description: `Articles tagged with ${tagName}`,
   };
 }
 
-export default async function BlogTagPage(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params;
-  // Properly await the slug parameter
-  const slug = params.slug;
-  const posts = await getPostsByTag(slug);
-  const tagName = posts.length > 0 ? posts[0].tags[0]?.name : slug;
+export default async function BlogTagPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const { slug } = resolvedParams;
+  const tagName = decodeURIComponent(slug);
+  
+  // Get posts with this tag
+  const posts = await getStoryblokStories({
+    starts_with: "blog/",
+    sort_by: "content.publication_date:desc",
+    filter_query: {
+      tags: {
+        in_array: tagName
+      }
+    }
+  } as any);
 
   return (
     <main className="bg-black text-white min-h-screen">
@@ -79,12 +91,12 @@ export default async function BlogTagPage(props: { params: Promise<{ slug: strin
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-              {posts.map((post: Post, index: number) => (
-                <article key={index} className="flex flex-col h-full">
+              {posts.map((post: Post) => (
+                <article key={post.uuid} className="flex flex-col h-full">
                   <div className="relative aspect-[4/3] mb-6 overflow-hidden group">
                     <Image
-                      src={post.feature_image || "/placeholder.svg?height=600&width=800"}
-                      alt={post.title}
+                      src={post.content.featured_image?.filename || "/placeholder.svg?height=600&width=800"}
+                      alt={post.content.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -94,17 +106,17 @@ export default async function BlogTagPage(props: { params: Promise<{ slug: strin
                   </div>
 
                   <Link href={`/blog/${post.slug}`} className="mb-3">
-                    <h3 className="text-xl font-bold hover:text-gray-300 transition-colors duration-300">{post.title}</h3>
+                    <h3 className="text-xl font-bold hover:text-gray-300 transition-colors duration-300">{post.content.title}</h3>
                   </Link>
 
-                  <p className="text-gray-400 text-sm mb-6">{post.custom_excerpt || post.excerpt}</p>
+                  <p className="text-gray-400 text-sm mb-6">{post.content.excerpt}</p>
 
                   <div className="flex items-center mt-auto">
                     <div className="w-8 h-8 rounded-full bg-gray-800 mr-3 overflow-hidden">
-                      {post.authors && post.authors.length > 0 && post.authors[0]?.profile_image && (
+                      {post.content.author?.content?.avatar && (
                         <Image 
-                          src={post.authors[0]?.profile_image}
-                          alt={post.authors[0]?.name} 
+                          src={post.content.author.content.avatar.filename}
+                          alt={post.content.author.name || "Author"} 
                           width={32} 
                           height={32}
                           className="w-full h-full object-cover" 
@@ -112,15 +124,14 @@ export default async function BlogTagPage(props: { params: Promise<{ slug: strin
                       )}
                     </div>
                     <div>
-                      {post.authors && post.authors.length > 0 ? (
+                      {post.content.author ? (
                         <>
-                          <p className="text-xs font-medium">{post.authors[0]?.name}</p>
+                          <p className="text-xs font-medium">{post.content.author.name}</p>
                           <p className="text-xs text-gray-500">
-                            {new Date(post.published_at).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
+                            {post.content.publication_date && format(
+                              new Date(post.content.publication_date),
+                              "MMMM dd, yyyy"
+                            )}
                           </p>
                         </>
                       ) : (
@@ -134,7 +145,7 @@ export default async function BlogTagPage(props: { params: Promise<{ slug: strin
           )}
         </div>
       </section>
-      <BlogNewsletter />
+      <StoryblokNewsletter />
       <Footer />
     </main>
   )

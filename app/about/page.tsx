@@ -3,7 +3,7 @@ import Image from "next/image"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { ArrowRight } from "lucide-react"
-import { GhostNewsletter } from "../blog/components/ghost-newsletter"
+import { StoryblokNewsletter } from "../blog/components/storyblok-newsletter"
 
 export default function AboutPage() {
   return (
@@ -165,7 +165,7 @@ export default function AboutPage() {
       </section>
 
       {/* Final Statement */}
-      <GhostNewsletter />
+      <StoryblokNewsletter />
 
       <Footer />
     </main>

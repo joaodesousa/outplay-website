@@ -1,49 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { Resend } from "resend";
 
-const GHOST_ADMIN_API_URL = process.env.GHOST_ADMIN_API_URL; // Example: 'https://yourghostsite.com/ghost/api/admin'
-const GHOST_ADMIN_API_KEY = process.env.GHOST_ADMIN_API_KEY; // Get from Ghost Admin
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-if (!GHOST_ADMIN_API_URL || !GHOST_ADMIN_API_KEY) {
-  throw new Error("Ghost API URL or Admin API Key is missing in environment variables.");
-}
-
-// Generate JWT for authentication
-const getGhostAdminToken = () => {
-  const [id, secret] = GHOST_ADMIN_API_KEY.split(":");
-  return jwt.sign({}, Buffer.from(secret, "hex"), {
-    keyid: id,
-    algorithm: "HS256",
-    expiresIn: "5m",
-    audience: "/admin/",
-  });
-};
-
-// API Route
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
-    if (!email) return NextResponse.json({ error: "Email is required" }, { status: 400 });
-
-    const response = await fetch(`${GHOST_ADMIN_API_URL}/members/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Ghost ${getGhostAdminToken()}`,
-      },
-      body: JSON.stringify({
-        members: [{ email, subscribed: true }],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      return NextResponse.json({ error: errorData.errors || "Failed to create member" }, { status: response.status });
+    
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: 201 });
+    // Advanced email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    }
+
+    // Send confirmation email
+    const { data, error } = await resend.emails.send({
+      from: `OUTPLAY <${process.env.RESEND_FROM_EMAIL}>`,
+      to: email,
+      subject: "Newsletter Subscription Confirmation",
+      html: `
+        <div>
+          <h1>Thank you for subscribing!</h1>
+          <p>You've been added to our newsletter list.</p>
+        </div>
+      `,
+    });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Here you would typically also add the subscriber to your database or service
+
+    return NextResponse.json(
+      { success: true, message: "Successfully subscribed to newsletter" },
+      { status: 201 }
+    );
   } catch (error) {
+    console.error("Newsletter subscription error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

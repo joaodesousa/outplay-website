@@ -101,7 +101,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Send a welcome/confirmation email to the subscriber
       try {
         const emailResponse = await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || 'newsletter@outplay.pt',
+          from: `OUTPLAY <${process.env.RESEND_FROM_EMAIL}>`,
           to: email,
           subject: 'Welcome to Our Newsletter',
           html: `

@@ -5,7 +5,12 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { X } from "lucide-react"
-import { ConversationItem } from "@/types/notion" // Import the type from your types file
+
+// Define locally instead of importing from Notion types
+interface ConversationItem {
+  type: "question" | "answer";
+  text: string;
+}
 
 interface ContactPageProps {}
 

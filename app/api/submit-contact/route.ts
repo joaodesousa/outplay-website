@@ -1,25 +1,44 @@
 // app/api/submit-contact/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { Client } from '@notionhq/client';
-import { APIErrorCode, ClientErrorCode, isNotionClientError } from '@notionhq/client';
+import { Resend } from 'resend';
+import StoryblokClient from 'storyblok-js-client';
 
-import type { 
-  ConversationItem, 
-  ContactFormData, 
-  ExtractedInfo,
-  NotionHeading2Block,
-  NotionParagraphBlock,
-  SuccessResponse,
-  ErrorResponse
-} from '@/types/notion';
+// Define types
+export interface ConversationItem {
+  type: 'question' | 'answer';
+  text: string;
+}
 
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_SECRET_KEY,
+export interface ContactFormData {
+  conversation: ConversationItem[];
+  email?: string;
+  source?: string;
+}
+
+export interface ExtractedInfo {
+  topic?: string;
+  challenge?: string;
+  obstacle?: string;
+  name?: string;
+  extractedEmail?: string;
+}
+
+export interface SuccessResponse {
+  success: boolean;
+  id: string;
+}
+
+export interface ErrorResponse {
+  error: string;
+}
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Initialize Storyblok Management API client
+const Storyblok = new StoryblokClient({
+  oauthToken: process.env.STORYBLOK_OAUTH_TOKEN,
 });
-
-// Use a separate database for contacts
-const contactDatabaseId = process.env.NOTION_CONTACT_DATABASE_ID;
 
 // Rate limiting storage (in memory - will reset on server restart)
 // For production, consider using Redis or another persistent store
@@ -119,116 +138,58 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
       }, { status: 400 });
     }
 
-    // Define conversation blocks for Notion page
-    const conversationBlocks: (NotionHeading2Block | NotionParagraphBlock)[] = [
-      {
-        object: 'block',
-        type: 'heading_2',
-        heading_2: {
-          rich_text: [{
-            text: {
-              content: 'Conversation',
-            },
-          }],
-        },
-      },
-      ...conversation.map(item => ({
-        object: 'block' as const,
-        type: 'paragraph' as const,
-        paragraph: {
-          rich_text: [{
-            text: {
-              content: `${item.type}: ${item.text}`,
-            },
-            annotations: {
-              bold: item.type === 'question',
-            },
-          }],
-        },
-      })),
-    ];
-
-    if (!contactDatabaseId) {
-      throw new Error('NOTION_CONTACT_DATABASE_ID environment variable is not set');
+    if (!process.env.STORYBLOK_SPACE_ID || !process.env.STORYBLOK_CONTACTS_FOLDER_ID) {
+      throw new Error('Storyblok configuration is missing');
     }
 
-    // Create a page in the Notion contacts database with flexible structure
-    const response = await notion.pages.create({
-      parent: {
-        database_id: contactDatabaseId,
-      },
-      properties: {
-        // Name property (usually the title column in Notion)
-        // Using extracted name if available, otherwise using email as the identifier
-        Name: {
-          title: [
-            {
-              text: {
-                content: extractedInfo.name || email,
-              },
-            },
-          ],
-        },
-        // Email property
-        Email: {
+    // Format the conversation for Storyblok
+    const formattedConversation = conversation.map(item => ({
+      type: item.type,
+      text: item.text
+    }));
+
+    // Create a unique slug for this contact submission
+    const slug = `contact-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const displayName = extractedInfo.name || email;
+    
+    // Create the contact in Storyblok
+    const response = await Storyblok.post(`spaces/${process.env.STORYBLOK_SPACE_ID}/stories`, {
+      story: {
+        name: displayName,
+        slug: slug,
+        content: {
+          component: 'contact_submission',
           email: email,
+          name: extractedInfo.name || '',
+          source: source || 'website',
+          created_at: new Date().toISOString(),
+          status: 'New',
+          topic: extractedInfo.topic || '',
+          challenge: extractedInfo.challenge || '',
+          obstacle: extractedInfo.obstacle || '',
+          conversation: formattedConversation
         },
-        // Source property (homepage contact form or contact page)
-        Source: {
-          select: {
-            name: source || 'website',
-          },
-        },
-        // Created at property
-        "Created at": {
-          date: {
-            start: new Date().toISOString(),
-          },
-        },
-        // Status property (you can use this to track follow-ups)
-        Status: {
-          status: {
-            name: "New",
-          },
-        },
-        // If you want to make specific answers searchable/filterable
-        // Only add these if your database has these properties
-        ...(extractedInfo.topic && {
-          Topic: {
-            rich_text: [
-              {
-                text: {
-                  content: extractedInfo.topic.substring(0, 2000), // Notion limit
-                }
-              }
-            ]
-          }
-        }),
-        ...(extractedInfo.challenge && {
-          Challenge: {
-            rich_text: [
-              {
-                text: {
-                  content: extractedInfo.challenge.substring(0, 2000), // Notion limit
-                }
-              }
-            ]
-          }
-        }),
-        ...(extractedInfo.obstacle && {
-          Obstacle: {
-            rich_text: [
-              {
-                text: {
-                  content: extractedInfo.obstacle.substring(0, 2000), // Notion limit
-                }
-              }
-            ]
-          }
-        }),
+        parent_id: process.env.STORYBLOK_CONTACTS_FOLDER_ID,
+        is_startpage: false,
       },
-      // Store the conversation in the page content
-      children: conversationBlocks,
+      publish: 1
+    });
+
+    // Send notification email to admin
+    await resend.emails.send({
+      from: `OUTPLAY <${process.env.RESEND_FROM_EMAIL}>`,
+      to: process.env.ADMIN_EMAIL || 'admin@outplay.com',
+      subject: 'New Contact Form Submission',
+      html: `
+        <div>
+          <h1>New Contact Form Submission</h1>
+          <p><strong>Name:</strong> ${extractedInfo.name || 'Not provided'}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Topic:</strong> ${extractedInfo.topic || 'Not provided'}</p>
+          <p><strong>Source:</strong> ${source || 'website'}</p>
+          <p><a href="${process.env.STORYBLOK_URL || 'https://app.storyblok.com'}/editor/${process.env.STORYBLOK_SPACE_ID}/content">View in Storyblok</a></p>
+        </div>
+      `,
     });
 
     // Track this submission for rate limiting
@@ -238,34 +199,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
 
     return NextResponse.json<SuccessResponse>({ 
       success: true, 
-      id: response.id 
+      id: response.story?.id?.toString() || 'created'
     }, { status: 200 });
   } catch (error) {
-    console.error('Error saving to Notion:', error);
-    
-    // Handle specific Notion API errors
-    if (isNotionClientError(error)) {
-      // This is a Notion-specific error
-      if (error.code === APIErrorCode.ObjectNotFound) {
-        return NextResponse.json<ErrorResponse>({ 
-          error: 'Database not found. Please check your configuration.' 
-        }, { status: 404 });
-      } else if (error.code === APIErrorCode.Unauthorized) {
-        return NextResponse.json<ErrorResponse>({ 
-          error: 'API key is invalid or expired.' 
-        }, { status: 401 });
-      } else if (error.code === ClientErrorCode.RequestTimeout) {
-        return NextResponse.json<ErrorResponse>({ 
-          error: 'Request timed out. Please try again.' 
-        }, { status: 408 });
-      }
-    }
+    console.error('Error processing contact submission:', error);
     
     // Generic error handling
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json<ErrorResponse>({ 
-      error: 'Failed to save contact information', 
-      details: errorMessage 
+      error: 'Failed to submit contact form: ' + errorMessage 
     }, { status: 500 });
   }
 }
