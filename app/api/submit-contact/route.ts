@@ -1,7 +1,6 @@
 // app/api/submit-contact/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import StoryblokClient from 'storyblok-js-client';
 
 // Define types
 export interface ConversationItem {
@@ -25,7 +24,6 @@ export interface ExtractedInfo {
 
 export interface SuccessResponse {
   success: boolean;
-  id: string;
 }
 
 export interface ErrorResponse {
@@ -34,11 +32,6 @@ export interface ErrorResponse {
 
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Initialize Storyblok Management API client
-const Storyblok = new StoryblokClient({
-  oauthToken: process.env.STORYBLOK_OAUTH_TOKEN,
-});
 
 // Rate limiting storage (in memory - will reset on server restart)
 // For production, consider using Redis or another persistent store
@@ -138,47 +131,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
       }, { status: 400 });
     }
 
-    if (!process.env.STORYBLOK_SPACE_ID || !process.env.STORYBLOK_CONTACTS_FOLDER_ID) {
-      throw new Error('Storyblok configuration is missing');
-    }
+    // Format the conversation for the email
+    const formattedConversation = conversation.map(item => {
+      return `<p><strong>${item.type === 'question' ? 'Question' : 'Answer'}:</strong> ${item.text}</p>`;
+    }).join('');
 
-    // Format the conversation for Storyblok
-    const formattedConversation = conversation.map(item => ({
-      type: item.type,
-      text: item.text
-    }));
-
-    // Create a unique slug for this contact submission
-    const slug = `contact-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const displayName = extractedInfo.name || email;
-    
-    // Create the contact in Storyblok
-    const response = await Storyblok.post(`spaces/${process.env.STORYBLOK_SPACE_ID}/stories`, {
-      story: {
-        name: displayName,
-        slug: slug,
-        content: {
-          component: 'contact_submission',
-          email: email,
-          name: extractedInfo.name || '',
-          source: source || 'website',
-          created_at: new Date().toISOString(),
-          status: 'New',
-          topic: extractedInfo.topic || '',
-          challenge: extractedInfo.challenge || '',
-          obstacle: extractedInfo.obstacle || '',
-          conversation: formattedConversation
-        },
-        parent_id: process.env.STORYBLOK_CONTACTS_FOLDER_ID,
-        is_startpage: false,
-      },
-      publish: 1
-    });
-
-    // Send notification email to admin
+    // Send notification email to support@outplay.pt
     await resend.emails.send({
       from: `OUTPLAY <${process.env.RESEND_FROM_EMAIL}>`,
-      to: process.env.ADMIN_EMAIL || 'admin@outplay.com',
+      to: 'support@outplay.pt',
       subject: 'New Contact Form Submission',
       html: `
         <div>
@@ -186,8 +147,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
           <p><strong>Name:</strong> ${extractedInfo.name || 'Not provided'}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Topic:</strong> ${extractedInfo.topic || 'Not provided'}</p>
+          <p><strong>Challenge:</strong> ${extractedInfo.challenge || 'Not provided'}</p>
+          <p><strong>Obstacle:</strong> ${extractedInfo.obstacle || 'Not provided'}</p>
           <p><strong>Source:</strong> ${source || 'website'}</p>
-          <p><a href="${process.env.STORYBLOK_URL || 'https://app.storyblok.com'}/editor/${process.env.STORYBLOK_SPACE_ID}/content">View in Storyblok</a></p>
+          <h2>Full Conversation:</h2>
+          ${formattedConversation}
         </div>
       `,
     });
@@ -198,8 +162,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
     ipSubmissions.set(ip, currentSubmissions);
 
     return NextResponse.json<SuccessResponse>({ 
-      success: true, 
-      id: response.story?.id?.toString() || 'created'
+      success: true
     }, { status: 200 });
   } catch (error) {
     console.error('Error processing contact submission:', error);
