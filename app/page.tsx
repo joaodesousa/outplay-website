@@ -41,29 +41,33 @@ export default function Home() {
   const [hasVisitedBefore, setHasVisitedBefore] = useState(true)
   const isDesktop = useIsDesktop()
 
-  // Replace with your actual YouTube video ID
-  const youtubeVideoId = "rt3y8PR41DY" // Example: Replace with your actual YouTube video ID
+  const youtubeVideoId = "rt3y8PR41DY"
 
+  // Effect for initial loading screen
   useEffect(() => {
-    // Check if this is the first visit
-    const hasVisited = localStorage.getItem("has-visited-before")
-    const newVisitor = !hasVisited
-
-    setHasVisitedBefore(!newVisitor)
-
-    // Set loading state
-    const timer = setTimeout(() => {
+    const loadingTimer = setTimeout(() => {
       setIsLoading(false)
+    }, 3000) // Loading screen duration
 
-      // Show video for new visitors after loading completes, but only on desktop
-      if (newVisitor && isDesktop) {
-        setShowVideo(true)
-        localStorage.setItem("has-visited-before", "true")
-      }
-    }, 3000) // Match this with your loading screen duration
+    return () => clearTimeout(loadingTimer)
+  }, []) // Runs once after initial mount
 
-    return () => clearTimeout(timer)
-  }, [isDesktop])
+  // Effect to determine if it's a first visit and show video accordingly
+  useEffect(() => {
+    const hasVisitedStorage = localStorage.getItem("has-visited-before")
+    const isFirstVisit = !hasVisitedStorage
+
+    setHasVisitedBefore(!isFirstVisit) // Update state based on storage
+
+    // If loading is complete, it's the first visit, and on desktop, show video
+    if (!isLoading && isFirstVisit && isDesktop) {
+      setShowVideo(true)
+      localStorage.setItem("has-visited-before", "true")
+    }
+    // Do not show video if it's not the first visit or not on desktop, even if loading is done.
+    // setShowVideo(false) should be handled by other interactions like handleCloseVideo
+
+  }, [isLoading, isDesktop, hasVisitedBefore]) // Dependencies that control video visibility
 
   const handleCloseVideo = () => {
     setShowVideo(false)

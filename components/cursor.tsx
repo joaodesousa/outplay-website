@@ -8,64 +8,45 @@ export function Cursor() {
   const [hidden, setHidden] = useState(true)
   const [clicked, setClicked] = useState(false)
   const [linkHovered, setLinkHovered] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    // Check if device is mobile
-    const checkMobile = () => {
-      setIsMobile(window.matchMedia("(max-width: 768px)").matches)
+    // Always show cursor and set up listeners
+    setHidden(false)
+
+    const updatePosition = (e: MouseEvent) => {
+      setPosition({ x: e.clientX, y: e.clientY })
     }
-    
-    // Initial check
-    checkMobile()
-    
-    // Listen for resize events
-    window.addEventListener("resize", checkMobile)
+    const handleMouseDown = () => setClicked(true)
+    const handleMouseUp = () => setClicked(false)
+    const handleLinkHoverStart = () => setLinkHovered(true)
+    const handleLinkHoverEnd = () => setLinkHovered(false)
+    const handleMouseLeaveWindow = () => setHidden(true)
+    const handleMouseEnterWindow = () => setHidden(false)
 
-    // Only add cursor events if not mobile
-    if (!isMobile) {
-      const updatePosition = (e: MouseEvent) => {
-        setPosition({ x: e.clientX, y: e.clientY })
-        setHidden(false)
-      }
+    window.addEventListener("mousemove", updatePosition)
+    window.addEventListener("mousedown", handleMouseDown)
+    window.addEventListener("mouseup", handleMouseUp)
+    window.addEventListener("mouseleave", handleMouseLeaveWindow)
+    window.addEventListener("mouseenter", handleMouseEnterWindow)
 
-      const handleMouseDown = () => setClicked(true)
-      const handleMouseUp = () => setClicked(false)
-
-      const handleLinkHoverStart = () => setLinkHovered(true)
-      const handleLinkHoverEnd = () => setLinkHovered(false)
-
-      window.addEventListener("mousemove", updatePosition)
-      window.addEventListener("mousedown", handleMouseDown)
-      window.addEventListener("mouseup", handleMouseUp)
-      window.addEventListener("mouseleave", () => setHidden(true))
-      window.addEventListener("mouseenter", () => setHidden(false))
-
-      const links = document.querySelectorAll("a, button")
-      links.forEach((link) => {
-        link.addEventListener("mouseenter", handleLinkHoverStart)
-        link.addEventListener("mouseleave", handleLinkHoverEnd)
-      })
-
-      return () => {
-        window.removeEventListener("mousemove", updatePosition)
-        window.removeEventListener("mousedown", handleMouseDown)
-        window.removeEventListener("mouseup", handleMouseUp)
-        window.removeEventListener("mouseleave", () => setHidden(true))
-        window.removeEventListener("mouseenter", () => setHidden(false))
-        window.removeEventListener("resize", checkMobile)
-
-        links.forEach((link) => {
-          link.removeEventListener("mouseenter", handleLinkHoverStart)
-          link.removeEventListener("mouseleave", handleLinkHoverEnd)
-        })
-      }
-    }
+    const links = document.querySelectorAll("a, button")
+    links.forEach((link) => {
+      link.addEventListener("mouseenter", handleLinkHoverStart)
+      link.addEventListener("mouseleave", handleLinkHoverEnd)
+    })
 
     return () => {
-      window.removeEventListener("resize", checkMobile)
+      window.removeEventListener("mousemove", updatePosition)
+      window.removeEventListener("mousedown", handleMouseDown)
+      window.removeEventListener("mouseup", handleMouseUp)
+      window.removeEventListener("mouseleave", handleMouseLeaveWindow)
+      window.removeEventListener("mouseenter", handleMouseEnterWindow)
+      links.forEach((link) => {
+        link.removeEventListener("mouseenter", handleLinkHoverStart)
+        link.removeEventListener("mouseleave", handleLinkHoverEnd)
+      })
     }
-  }, [isMobile])
+  }, []) // Empty dependency array: runs once on mount, cleans up on unmount
 
   const cursorVariants = {
     default: {
@@ -94,19 +75,13 @@ export function Cursor() {
     },
   }
 
-  // For mobile devices, render an empty div with the same className to maintain DOM structure
-  if (isMobile) {
-    return <div className="fixed top-0 left-0 rounded-full pointer-events-none z-50 mix-blend-difference" style={{opacity: 0}} suppressHydrationWarning />
-  }
-
   return (
     <motion.div
       className="fixed top-0 left-0 rounded-full pointer-events-none z-50 mix-blend-difference"
       variants={cursorVariants}
       animate={clicked ? "clicked" : linkHovered ? "link" : "default"}
       transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.5 }}
-      style={{ opacity: hidden ? 0 : 1 }}
-      suppressHydrationWarning
+      style={{ opacity: hidden ? 0 : 1 }} // Controlled by mouse enter/leave
     />
   )
 }

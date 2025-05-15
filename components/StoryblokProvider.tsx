@@ -1,9 +1,10 @@
 "use client";
 
-import { storyblokInit, apiPlugin, storyblokEditable } from "@storyblok/react";
+import { storyblokInit, apiPlugin } from "@storyblok/react";
 import components from '@/lib/storyblok-components';
 import { useEffect, useState } from "react";
 
+// Initialize Storyblok outside component to avoid re-initialization
 storyblokInit({
   accessToken: process.env.NEXT_PUBLIC_STORYBLOK_API_TOKEN,
   use: [apiPlugin],
@@ -16,16 +17,12 @@ export default function StoryblokProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Ensure init runs only once on client side
-    setIsInitialized(true);
+    setMounted(true);
   }, []);
 
-  if (!isInitialized && typeof window !== 'undefined') {
-    return null;
-  }
-
-  return children;
+  // Important: Return same content structure on server and client
+  return <>{children}</>;
 } 

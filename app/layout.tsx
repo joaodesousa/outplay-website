@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Cursor } from '@/components/cursor'
+import ClientCursor from '@/components/ClientCursor'
 import StoryblokProvider from '@/components/StoryblokProvider';
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default function RootLayout({
         <StoryblokProvider>
           {children}
         </StoryblokProvider>
-        <Cursor />
+        <ClientCursor />
       </body>
     </html>
   )
