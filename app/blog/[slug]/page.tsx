@@ -10,6 +10,7 @@ import { StoryblokComponent } from "@storyblok/react"
 import { richTextResolver } from "@storyblok/richtext"
 import { notFound } from "next/navigation"
 import { format } from "date-fns"
+import { SEO } from "@/components/SEO"
 
 export const dynamic = 'force-static';
 export const revalidate = 3600; // Revalidate every hour
@@ -86,6 +87,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <main className="bg-black text-white min-h-screen">
       <Navigation />
+      <SEO type="blog" post={story} />
 
       {/* Hero Section */}
       <section className="pt-40 pb-20">

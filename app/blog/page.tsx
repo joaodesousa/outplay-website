@@ -7,6 +7,7 @@ import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Metadata } from "next"
 import { StoryblokNewsletter } from "./components/storyblok-newsletter"
+import { SEO } from "@/components/SEO";
 
 export const revalidate = 3600; // Revalidate the data at most every hour
 
@@ -25,6 +26,21 @@ export default async function BlogPage() {
   return (
     <main className="bg-black text-white min-h-screen">
       <Navigation />
+      <SEO type="website" jsonLd={{
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        'name': 'OUTPLAY Blog',
+        'description': 'Insights, perspectives, and case studies on branding, design, and digital experiences.',
+        'url': 'https://outplay.pt/blog',
+        'publisher': {
+          '@type': 'Organization',
+          'name': 'OUTPLAY',
+          'logo': {
+            '@type': 'ImageObject',
+            'url': 'https://outplay.pt/logo_squared.png'
+          }
+        }
+      }} />
 
       {/* Hero Section */}
       <section className="pt-40 pb-20">
