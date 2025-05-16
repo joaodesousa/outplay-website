@@ -12,6 +12,16 @@ import { notFound } from "next/navigation"
 import { format } from "date-fns"
 import { SEO } from "@/components/SEO"
 
+// Helper function to decode HTML entities (server-safe)
+function decodeHtmlEntities(html: string): string {
+  return html
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
 export const dynamic = 'force-static';
 export const revalidate = 3600; // Revalidate every hour
 
@@ -133,7 +143,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   <p className="text-xs text-gray-500">
                     {story.content.author && story.content.author.content && 
                      story.content.author.content.bio ? 
-                     render(story.content.author.content.bio).replace(/<[^>]*>?/gm, '').substring(0, 60) + '...' : "Author"}
+                     decodeHtmlEntities(render(story.content.author.content.bio).replace(/<[^>]*>?/gm, '')).substring(0, 60) : "Author"}
                   </p>
                 </div>
               </div>
