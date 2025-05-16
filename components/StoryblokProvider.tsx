@@ -34,8 +34,9 @@ export default function StoryblokProvider({
       
       // Update Storyblok with current language
       bridge.on('input', (event) => {
-        if (event.story.lang !== locale) {
-          bridge.setLanguage(locale);
+        if (event?.story?.lang !== locale) {
+          // bridge.setLanguage(locale); - Method doesn't exist on StoryblokBridgeV2 type
+          console.log('Language mismatch between Storyblok and app:', event?.story?.lang, locale);
         }
       });
     }

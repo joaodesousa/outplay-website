@@ -9,7 +9,7 @@ export const locales = ['en', 'pt'];
 export type Locale = typeof locales[number];
 
 export interface Translations {
-  [key: string]: string | Translations;
+  [key: string]: string | string[] | Translations;
 }
 
 export const translations: Record<Locale, Translations> = {

@@ -10,6 +10,11 @@ export default function LanguageProvider({ children }: { children: ReactNode }) 
 
   // Detect locale from URL on initial load and when pathname changes
   useEffect(() => {
+    if (!pathname) {
+      setLocale(defaultLocale as Locale);
+      return;
+    }
+    
     const pathParts = pathname.split('/').filter(Boolean);
     const firstPart = pathParts[0];
     

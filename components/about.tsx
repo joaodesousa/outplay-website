@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import Image from "next/image"
-import { t } from "@/lib/i18n"
+import { useLocale } from "@/lib/i18n"
 
 // Team members remain hardcoded for now
 const teamMembers = [
@@ -28,6 +28,7 @@ export function About() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeTab, setActiveTab] = useState("mission")
   const [windowWidth, setWindowWidth] = useState(0)
+  const { t } = useLocale()
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],

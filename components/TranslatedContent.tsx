@@ -2,7 +2,6 @@
 
 import { ReactNode } from 'react';
 import { useLocale } from '@/lib/i18n';
-import { t } from '@/lib/i18n';
 
 type TranslatedContentProps = {
   translationKey?: string;
@@ -25,7 +24,7 @@ export default function TranslatedContent({
   en,
   pt,
 }: TranslatedContentProps) {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
 
   // If translation key is provided, use it
   if (translationKey) {
