@@ -28,6 +28,6 @@ export const config = {
   // Skip all paths that should not be internationalized.
   // This includes API routes, static files, images, fonts, etc.
   matcher: [
-    '/((?!api|_next/static|_next/image|fonts|favicon.ico|robots.txt|sitemap.xml|manifest.json|sw.js|workbox-.*\\.js).*)'
+    '/((?!api|_next/static|_next/image|fonts|favicon.ico|robots.txt|sitemap.xml|manifest.json|sw.js|workbox-.*\\.js|logo.png|logo_white.png|.*\\.png|.*\\.jpg|.*\\.svg|.*\\.jpeg|.*\\.gif).*)'
   ],
 }; 
