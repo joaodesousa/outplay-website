@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Metadata } from "next"
-import { StoryblokNewsletter } from "./components/storyblok-newsletter"
+import { BlogNewsletter } from "./components/newsletter"
 import { SEO } from "@/components/SEO";
 
 export const revalidate = 3600; // Revalidate the data at most every hour
@@ -201,7 +201,7 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      <StoryblokNewsletter />
+      <BlogNewsletter />
 
       <Footer />
     </main>
