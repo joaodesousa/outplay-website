@@ -64,3 +64,42 @@ export function generateBlogPostSchema(post: any) {
     },
   };
 }
+
+export function generateLocalBusinessSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'OUTPLAY',
+    url: 'https://outplay.pt',
+    logo: 'https://outplay.pt/logo_squared.png',
+    image: 'https://outplay.pt/logo_squared.png',
+    telephone: '', // Add your contact number if available
+    email: 'hello@outplay.pt',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '', // Add your street address if available
+      addressLocality: 'Porto', // Update with your city
+      addressRegion: 'Porto', // Update with your region/state
+      postalCode: '', // Add your postal code if available
+      addressCountry: 'PT',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: '', // Add your latitude if available
+      longitude: '', // Add your longitude if available
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+      ],
+      opens: '09:00',
+      closes: '18:00',
+    },
+    priceRange: '$$',
+  };
+}

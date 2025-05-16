@@ -1,6 +1,6 @@
 'use client';
 
-import Image, { ImageProps } from 'next/image';
+import Image, { ImageProps, StaticImageData } from 'next/image';
 import { useState } from 'react';
 
 interface SEOImageProps extends Omit<ImageProps, 'alt'> {
@@ -17,7 +17,7 @@ export function SEOImage({
   caption,
   ...props
 }: SEOImageProps) {
-  const [imgSrc, setImgSrc] = useState<string | StaticImageData>(props.src);
+  const [imgSrc, setImgSrc] = useState<any>(props.src);
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
@@ -58,4 +58,4 @@ export function SEOImage({
       `}</style>
     </figure>
   );
-} 
+}
