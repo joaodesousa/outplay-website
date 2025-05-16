@@ -83,7 +83,7 @@ export function Navigation() {
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         <Link href={`/${locale}/`} className="text-2xl font-bold">
-         <Image src="/logo_white.png" alt="OUTPLAY" width={130} height={150} />
+         <Image src="/logo_white.png" alt="OUTPLAY" width={130} height={150} unoptimized />
         </Link>
 
         <div className="hidden md:flex items-center space-x-12">
@@ -131,7 +131,7 @@ export function Navigation() {
           >
             <div className="container mx-auto px-6 md:px-12 py-8 flex justify-between items-center">
               <Link href={`/${locale}/`} className="text-2xl font-bold">
-         <Image src="/logo.png" alt="OUTPLAY" width={130} height={150} />
+         <Image src="/logo.png" alt="OUTPLAY" width={130} height={150} unoptimized />
               </Link>
 
               <button
