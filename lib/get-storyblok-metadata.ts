@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import { getStoryblokContent } from './storyblok';
+import { locales, Locale } from './i18n';
 
-export async function getStoryblokMetadata(slug: string): Promise<Metadata> {
+export async function getStoryblokMetadata(slug: string, currentLocale: Locale = 'pt'): Promise<Metadata> {
   try {
     const story = await getStoryblokContent(slug);
     
@@ -17,7 +18,25 @@ export async function getStoryblokMetadata(slug: string): Promise<Metadata> {
     
     // Base URL - update this to your production domain
     const baseUrl = "https://outplay.pt";
-    const pageUrl = `${baseUrl}/${slug}`;
+    
+    // Extract the path without locale prefix for creating alternate URLs
+    let pathWithoutLocale = slug;
+    const slugParts = slug.split('/');
+    if (slugParts[0] && locales.includes(slugParts[0] as Locale)) {
+      pathWithoutLocale = slugParts.slice(1).join('/');
+    }
+    
+    // Create canonical URL with current locale
+    const pageUrl = `${baseUrl}/${currentLocale}/${pathWithoutLocale}`;
+    
+    // Map locale to OpenGraph format
+    const ogLocale = currentLocale === 'pt' ? 'pt_PT' : 'en_US';
+    
+    // Create alternates for all supported languages
+    const languageAlternates: Record<string, string> = {};
+    locales.forEach((locale) => {
+      languageAlternates[locale] = `${baseUrl}/${locale}/${pathWithoutLocale}`;
+    });
     
     // Default metadata
     const metadata: Metadata = {
@@ -26,6 +45,7 @@ export async function getStoryblokMetadata(slug: string): Promise<Metadata> {
       keywords: content.tags?.join(', ') || 'OUTPLAY, branding, digital, experiences, creative',
       alternates: {
         canonical: pageUrl,
+        languages: languageAlternates,
       },
       robots: {
         index: true,
@@ -39,7 +59,7 @@ export async function getStoryblokMetadata(slug: string): Promise<Metadata> {
     };
     
     // Add OpenGraph metadata
-    if (slug.startsWith('blog/')) {
+    if (slug.startsWith('blog/') || slug.includes('/blog/')) {
       // Create article OpenGraph for blog posts
       metadata.openGraph = {
         type: 'article',
@@ -47,7 +67,7 @@ export async function getStoryblokMetadata(slug: string): Promise<Metadata> {
         title: `${name} | OUTPLAY`,
         description: content.excerpt || content.description || 'OUTPLAY - we write the rules you follow',
         siteName: 'OUTPLAY',
-        locale: 'en_US',
+        locale: ogLocale,
         publishedTime: content.publication_date || story.published_at,
         modifiedTime: story.published_at,
         authors: [content.author?.name || 'OUTPLAY'],
@@ -61,7 +81,7 @@ export async function getStoryblokMetadata(slug: string): Promise<Metadata> {
         title: `${name} | OUTPLAY`,
         description: content.excerpt || content.description || 'OUTPLAY - we write the rules you follow',
         siteName: 'OUTPLAY',
-        locale: 'en_US',
+        locale: ogLocale,
       };
     }
     

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import ClientCursor from '@/components/ClientCursor'
 import StoryblokProvider from '@/components/StoryblokProvider';
+import LanguageProvider from '@/components/LanguageProvider';
 import { SEO } from '@/components/SEO';
 
 export const metadata: Metadata = {
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   publisher: 'OUTPLAY',
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'pt_PT',
     url: 'https://outplay.pt',
     siteName: 'OUTPLAY',
     title: 'OUTPLAY - we write the rules you follow',
@@ -54,6 +55,10 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://outplay.pt',
+    languages: {
+      'en': 'https://outplay.pt/en',
+      'pt-PT': 'https://outplay.pt',
+    },
   },
 }
 
@@ -63,15 +68,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt">
       <head>
         <script defer src="https://umami.outplay.pt/script.js" data-website-id="1b732a89-fbdd-4925-ab77-1aa38357fc4f"></script>
       </head>
       <body className="bg-black text-white">
-        <StoryblokProvider>
-          {children}
-          <SEO type="organization" />
-        </StoryblokProvider>
+        <LanguageProvider>
+          <StoryblokProvider>
+            {children}
+            <SEO type="organization" />
+          </StoryblokProvider>
+        </LanguageProvider>
         <ClientCursor />
       </body>
     </html>

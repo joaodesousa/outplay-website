@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { ArrowRight, Instagram, Linkedin, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n";
 
 export function Footer() {
+  const { t } = useLocale();
   const [email, setEmail] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState<string>("");
@@ -26,7 +28,7 @@ export function Footer() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setStatus("error");
-      setMessage("Please enter a valid email address");
+      setMessage(t("footer.errorValidEmail"));
       return;
     }
 
@@ -43,15 +45,15 @@ export function Footer() {
 
       if (response.ok) {
         setStatus("success");
-        setMessage("Subscribed successfully!");
+        setMessage(t("footer.newsletterSuccess"));
         setEmail(""); // Clear input for new subscriptions
       } else {
         setStatus("error");
-        setMessage(result.error || "Subscription failed. Please try again.");
+        setMessage(result.error || t("footer.newsletterErrorFailed"));
       }
     } catch (error) {
       setStatus("error");
-      setMessage("An unexpected error occurred. Please try again later.");
+      setMessage(t("footer.newsletterErrorUnexpected"));
       console.error("Newsletter subscription error:", error);
     }
 
@@ -77,12 +79,12 @@ export function Footer() {
       <div className="container mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
           <div>
-            <h3 className="text-lg font-medium mb-6">newsletter</h3>
+            <h3 className="text-lg font-medium mb-6">{t("footer.newsletterTitle")}</h3>
             <div className="flex flex-col">
               <div className="flex items-center border-b border-gray-800 focus-within:border-white transition-duration-300">
                 <input
                   type="email"
-                  placeholder="enter your email"
+                  placeholder={t("footer.newsletterPlaceholder")}
                   className="w-full bg-transparent py-3 focus:outline-none placeholder-gray-600"
                   value={email}
                   onChange={handleEmailChange}
@@ -93,7 +95,7 @@ export function Footer() {
                   className="text-white focus:outline-none"
                   onClick={handleSubscribe}
                   disabled={status === "loading"}
-                  aria-label="Subscribe to newsletter"
+                  aria-label={t("footer.newsletterAriaLabel")}
                 >
                   {status === "loading" ? (
                     <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
@@ -121,13 +123,13 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg font-medium mb-6">contact</h3>
-            <p className="text-gray-400 mb-2">+351 969 179 179</p>
+            <h3 className="text-lg font-medium mb-6">{t("footer.contactTitle")}</h3>
+           
             <p className="text-gray-400">hello@outplay.pt</p>
           </div>
 
           <div className="flex flex-col justify-between h-full">
-            <h3 className="text-lg font-medium mb-6">social media</h3>
+            <h3 className="text-lg font-medium mb-6">{t("footer.socialMediaTitle")}</h3>
             <div className="flex space-x-4">
               <Link href="https://instagram.com/outplaypt" target="_blank"><Instagram strokeWidth={1.5} /></Link>
               <Link href="https://linkedin.com/company/outplaypt" target="_blank"><Linkedin strokeWidth={1.5} /></Link>
@@ -137,15 +139,15 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center pt-8 border-t border-gray-900">
           <div className="mb-6 md:mb-0">
-            <p className="text-sm text-gray-600">© {new Date().getFullYear()} OUTPLAY. All rights reserved.</p>
+            <p className="text-sm text-gray-600">{t("footer.copyright", { year: new Date().getFullYear().toString() })}</p>
           </div>
 
           <div className="flex space-x-8">
             <Link href="/privacy-policy" className="text-sm text-gray-600 hover:text-white transition-colors duration-300">
-              Privacy Policy
+              {t("footer.privacyPolicyLink")}
             </Link>
             <Link href="/cookie-policy" className="text-sm text-gray-600 hover:text-white transition-colors duration-300">
-              Cookie Policy
+              {t("footer.cookiePolicyLink")}
             </Link>
           </div>
         </div>

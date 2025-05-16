@@ -1,0 +1,209 @@
+{
+  "common": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "home": {
+    "welcomeMessage": "Welcome to OUTPLAY"
+  },
+  "buttons": {
+    "readMore": "Read More",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "hero": {
+    "title": {
+      "we": "we",
+      "writeTheRules": "write the rules",
+      "you": "you",
+      "follow": "follow"
+    },
+    "subtitle": "the impossible was never our style",
+    "scrollPrompt": "Scroll to explore"
+  },
+  "navigation": {
+    "projects": "projects",
+    "whatWeDo": "what we do",
+    "blog": "blog",
+    "about": "about us",
+    "contactLink": "contact",
+    "menu": "menu",
+    "close": "Close",
+    "contactTitle": "Contact",
+    "followUs": "Follow Us"
+  },
+  "projects": {
+    "title": "things we did",
+    "loading": "Loading projects...",
+    "notFound": "No projects found.",
+    "viewProject": "View project",
+    "clientLabel": "Client",
+    "yearLabel": "Year",
+    "categoryLabel": "Category"
+  },
+  "skills": {
+    "mainTitle": "what we do",
+    "hideCapabilities": "Hide Capabilities",
+    "viewCapabilities": "View Capabilities",
+    "categories": {
+      "funding": {
+        "title": "Funding Acquisition",
+        "description": "Every journey begins with resources. We find the angles others miss, turning technically sound proposals into compelling narratives that stand out to evaluators and secure the funding that fuels your vision.",
+        "skills": [
+          "Erasmus+ proposals",
+          "Horizon Europe submissions",
+          "Portugal 2030 funding",
+          "Project conceptualization",
+          "Budget development",
+          "Impact assessment"
+        ]
+      },
+      "branding": {
+        "title": "Brand Identity",
+        "description": "We create identities that reject the expected and embrace the distinctive, crafting visual and verbal languages that capture your unique approach to changing the game.",
+        "skills": [
+          "Visual identity development",
+          "Brand positioning",
+          "Brand guidelines",
+          "Logo design",
+          "Typography systems",
+          "Brand storytelling"
+        ]
+      },
+      "digital": {
+        "title": "Digital Experiences",
+        "description": "Your identity deserves a digital presence that breaks the mold. We create experiences that feel both surprising and intuitive—because standing out doesn't mean sacrificing clarity or function.",
+        "skills": [
+          "Website design & development",
+          "Platform creation",
+          "User experience design",
+          "Digital product development",
+          "Data visualization",
+          "Interactive solutions"
+        ]
+      },
+      "transformation": {
+        "title": "Digital Transformation",
+        "description": "Breaking free from outdated processes isn't just about new tools—it's about new thinking. We guide organizations through digital evolution, finding the right mix of technology and strategy to transform how you work without losing what makes you unique.",
+        "skills": [
+          "Process digitalization",
+          "Workflow optimization",
+          "Digital tools integration",
+          "Legacy system modernization",
+          "Team adaptation support",
+          "Digital maturity assessment"
+        ]
+      },
+      "communication": {
+        "title": "Communication Strategy",
+        "description": "With your foundation established, it's time to be heard. We develop communication approaches that sidestep convention, creating messages that resonate with the people who matter to your mission.",
+        "skills": [
+          "Strategic messaging",
+          "Content development",
+          "Social media strategy",
+          "Project dissemination",
+          "Audience engagement",
+          "Communication planning"
+        ]
+      },
+      "experiential": {
+        "title": "Event Design",
+        "description": "The journey culminates in real-world impact. We create experiences where your audiences aren't just passive observers but active participants in something meaningful—the ultimate expression of your vision.",
+        "skills": [
+          "Event planning",
+          "Experience design",
+          "Hybrid event solutions",
+          "Space utilization",
+          "Event branding",
+          "Participant engagement"
+        ]
+      }
+    }
+  },
+  "contact": {
+    "sectionTitle": {
+      "ready": "Ready to ",
+      "write": "write",
+      "newRules": "new rules",
+      "together": "together?"
+    },
+    "formSubtitle": "Talk to us",
+    "placeholderName": "Insert your name here",
+    "placeholderEmail": "Type your email here",
+    "placeholderMessage": "Start typing",
+    "buttonSend": "Send message",
+    "buttonSending": "Sending...",
+    "successTitle": "Message Sent",
+    "successMessage": "Thanks for reaching out. We'll get back to you soon!",
+    "errorTitle": "Error",
+    "errorFillFields": "Please fill in all fields",
+    "errorValidEmail": "Please enter a valid email address",
+    "errorSubmitFailed": "Failed to submit message. Please try again.",
+    "errorUnexpected": "An unexpected error occurred. Please try again later.",
+    "errorSomethingWrong": "Something went wrong. Please try again."
+  },
+  "footer": {
+    "newsletterTitle": "Newsletter",
+    "contactTitle": "Contact",
+    "socialMediaTitle": "Social Media",
+    "newsletterPlaceholder": "Enter your email",
+    "newsletterAriaLabel": "Subscribe to newsletter",
+    "errorValidEmail": "Please enter a valid email address",
+    "newsletterSuccess": "Subscribed successfully!",
+    "newsletterErrorFailed": "Subscription failed. Please try again.",
+    "newsletterErrorUnexpected": "An unexpected error occurred. Please try again later.",
+    "copyright": "© {{year}} OUTPLAY. All rights reserved.",
+    "privacyPolicyLink": "Privacy Policy",
+    "cookiePolicyLink": "Cookie Policy"
+  },
+  "about": {
+    "mainTitle": "About Us",
+    "tabs": {
+      "mission": "Mission",
+      "approach": "Approach",
+      "values": "Values"
+    },
+    "missionContent": {
+      "title": "Our Mission",
+      "p1": "OUTPLAY is a specialized communication agency dedicated to transforming complex scientific achievements into compelling narratives that resonate with diverse audiences.",
+      "p2": "We believe that great scientific breakthroughs deserve equally great communication. Our mission is to amplify the impact of science through strategic, creative, and accessible communication."
+    },
+    "approachContent": {
+      "title": "Our Approach",
+      "p1": "We combine deep scientific knowledge with creative storytelling to bridge the gap between innovation and understanding.",
+      "p2": "Our interdisciplinary team works closely with scientists, research institutions, and innovative companies to craft narratives that capture the essence of their work and communicate it effectively."
+    },
+    "valuesContent": {
+      "title": "Our Values",
+      "p1": "Accuracy, creativity, and accessibility are at the core of everything we do. We are committed to maintaining scientific integrity while making complex concepts understandable.",
+      "p2": "We value collaboration, innovation, and continuous learning, staying at the forefront of both scientific advancements and communication strategies."
+    },
+    "statsSection": {
+      "yearsExperience": "Years Experience",
+      "scientificProjects": "Scientific Projects",
+      "researchPartners": "Research Partners",
+      "industryAwards": "Industry Awards"
+    },
+    "teamSection": {
+      "title": "Our Team",
+      "viewAllButton": "View All Team Members"
+    }
+  },
+  "cookieNotice": {
+    "title": "Cookie Notice",
+    "message": "This website uses cookies to enhance your browsing experience.",
+    "necessaryOnlyButton": "Necessary only",
+    "acceptAllButton": "Accept all"
+  },
+  "blogNewsletter": {
+    "title": "Subscribe to Our Newsletter",
+    "subtitle": "Be the first to know what's next, not what's now.",
+    "emailPlaceholder": "Your email address",
+    "buttonSubscribe": "Subscribe",
+    "successMessage": "Thank you for subscribing!",
+    "errorFailed": "Subscription failed",
+    "errorUnexpected": "An unexpected error occurred"
+  }
+} 

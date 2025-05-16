@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight, X } from "lucide-react"
+import { useLocale } from "@/lib/i18n"
 
 interface FormData {
   name: string;
@@ -11,6 +12,7 @@ interface FormData {
 }
 
 export function Contact() {
+  const { t } = useLocale()
   // Form state
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -44,7 +46,7 @@ export function Contact() {
     // Validate form
     if (!formData.name || !formData.email || !formData.message) {
       setShowErrorMessage(true);
-      setErrorMessage('Please fill in all fields');
+      setErrorMessage(t("contact.errorFillFields"));
       return;
     }
     
@@ -52,7 +54,7 @@ export function Contact() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setShowErrorMessage(true);
-      setErrorMessage('Please enter a valid email address');
+      setErrorMessage(t("contact.errorValidEmail"));
       return;
     }
     
@@ -104,12 +106,12 @@ export function Contact() {
       } else {
         // Show error message
         setShowErrorMessage(true);
-        setErrorMessage(result.error || 'Failed to submit message. Please try again.');
+        setErrorMessage(result.error || t("contact.errorSubmitFailed"));
       }
     } catch (error) {
       // Handle unexpected errors
       setShowErrorMessage(true);
-      setErrorMessage('An unexpected error occurred. Please try again later.');
+      setErrorMessage(t("contact.errorUnexpected"));
       console.error('Error submitting contact form:', error);
     } finally {
       setIsSubmitting(false);
@@ -131,11 +133,11 @@ export function Contact() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6">
-              Ready to <span className="font-bold">write</span>
+              {t("contact.sectionTitle.ready")}<span className="font-bold">{t("contact.sectionTitle.write")}</span>
               <br />
-              <span className="font-bold">new rules</span>
+              <span className="font-bold">{t("contact.sectionTitle.newRules")}</span>
               <br />
-              <span className="font-bold">together</span>?
+              <span className="font-bold">{t("contact.sectionTitle.together")}</span>
             </h2>
           </motion.div>
           
@@ -146,13 +148,13 @@ export function Contact() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <h3 className="text-xl font-bold mb-8">talk to us</h3>
+            <h3 className="text-xl font-bold mb-8">{t("contact.formSubtitle")}</h3>
             <form className="space-y-8" onSubmit={handleSubmit}>
               <div>
                 <input
                   type="text"
                   name="name"
-                  placeholder="insert your name here"
+                  placeholder={t("contact.placeholderName")}
                   value={formData.name}
                   onChange={handleInputChange}
                   className="w-full bg-transparent border-b border-gray-800 py-4 focus:outline-none focus:border-white transition-colors duration-300 placeholder-gray-600"
@@ -163,7 +165,7 @@ export function Contact() {
                 <input
                   type="email"
                   name="email"
-                  placeholder="type your email here"
+                  placeholder={t("contact.placeholderEmail")}
                   value={formData.email}
                   onChange={handleInputChange}
                   className="w-full bg-transparent border-b border-gray-800 py-4 focus:outline-none focus:border-white transition-colors duration-300 placeholder-gray-600"
@@ -173,7 +175,7 @@ export function Contact() {
               <div>
                 <textarea
                   name="message"
-                  placeholder="start typing"
+                  placeholder={t("contact.placeholderMessage")}
                   rows={3}
                   value={formData.message}
                   onChange={handleInputChange}
@@ -187,7 +189,7 @@ export function Contact() {
                   disabled={isSubmitting}
                   className="flex items-center space-x-2 text-white hover:text-gray-300 transition-colors duration-300 disabled:opacity-50"
                 >
-                  <span>{isSubmitting ? 'Sending...' : 'Send message'}</span>
+                  <span>{isSubmitting ? t("contact.buttonSending") : t("contact.buttonSend")}</span>
                   <ArrowRight size={20} className="ml-2" />
                 </button>
               </div>
@@ -210,9 +212,9 @@ export function Contact() {
                       <X size={20} />
                     </button>
                     <div className="w-12 h-1 bg-white mb-4" />
-                    <h4 className="text-2xl font-bold mb-2">Message Sent</h4>
+                    <h4 className="text-2xl font-bold mb-2">{t("contact.successTitle")}</h4>
                     <p className="text-gray-300">
-                      Thanks for reaching out. We'll get back to you soon!
+                      {t("contact.successMessage")}
                     </p>
                   </div>
                 </motion.div>
@@ -236,9 +238,9 @@ export function Contact() {
                       <X size={20} />
                     </button>
                     <div className="w-12 h-1 bg-red-500 mb-4" />
-                    <h4 className="text-2xl font-bold mb-2">Error</h4>
+                    <h4 className="text-2xl font-bold mb-2">{t("contact.errorTitle")}</h4>
                     <p className="text-gray-300">
-                      {errorMessage || "Something went wrong. Please try again."}
+                      {errorMessage || t("contact.errorSomethingWrong")}
                     </p>
                   </div>
                 </motion.div>

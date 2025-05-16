@@ -2,6 +2,7 @@
 
 import { generateOrganizationSchema, generateWebsiteSchema, generateBlogPostSchema, generateLocalBusinessSchema } from '@/lib/structured-data';
 import Script from 'next/script';
+import { useLocale } from '@/lib/i18n';
 
 type SEOProps = {
   type?: 'website' | 'blog' | 'business' | 'organization';
@@ -10,22 +11,25 @@ type SEOProps = {
 };
 
 export function SEO({ type = 'website', post, jsonLd }: SEOProps) {
+  // Get current locale from context
+  const { locale } = useLocale();
+
   // Generate appropriate schema based on the type
   let schemaData: Record<string, any> | null = null;
 
   switch (type) {
     case 'blog':
-      schemaData = generateBlogPostSchema(post);
+      schemaData = generateBlogPostSchema(post, locale);
       break;
     case 'business':
-      schemaData = generateLocalBusinessSchema();
+      schemaData = generateLocalBusinessSchema(locale);
       break;
     case 'organization':
-      schemaData = generateOrganizationSchema();
+      schemaData = generateOrganizationSchema(locale);
       break;
     case 'website':
     default:
-      schemaData = generateWebsiteSchema();
+      schemaData = generateWebsiteSchema(locale);
       break;
   }
 

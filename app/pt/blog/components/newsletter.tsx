@@ -37,11 +37,11 @@ export function BlogNewsletter() {
         }, 3000)
       } else {
         setStatus('error')
-        setErrorMessage(result.error || 'Subscription failed')
+        setErrorMessage(result.error || 'A subscrição falhou')
       }
     } catch (error) {
       setStatus('error')
-      setErrorMessage('An unexpected error occurred')
+      setErrorMessage('Ocorreu um erro inesperado')
       console.error('Newsletter subscription error:', error)
     }
   }
@@ -50,9 +50,9 @@ export function BlogNewsletter() {
     <section className="py-20 border-t border-gray-900">
       <div className="container mx-auto px-6 md:px-12">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Subscribe to Our Newsletter</h2>
+          <h2 className="text-3xl font-bold mb-6">Subscreva a Nossa Newsletter</h2>
           <p className="text-gray-400 mb-8">
-          Be the first to know what's next, not what's now.
+          Seja o primeiro a saber o que se segue, não o que é agora.
           </p>
           
           <form onSubmit={handleSubmit} className="relative">
@@ -61,7 +61,7 @@ export function BlogNewsletter() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email address"
+                placeholder="O seu endereço de email"
                 required
                 disabled={status === 'submitting'}
                 className="flex-1 bg-transparent border border-gray-800 px-4 py-3 focus:outline-none focus:border-white transition-colors disabled:opacity-50"
@@ -74,7 +74,7 @@ export function BlogNewsletter() {
                 {status === 'submitting' ? (
                   <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
                 ) : (
-                  <>Subscribe <ArrowRight size={18} className="ml-2" /></>
+                  <>Subscrever <ArrowRight size={18} className="ml-2" /></>
                 )}
               </button>
             </div>
@@ -87,7 +87,7 @@ export function BlogNewsletter() {
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute left-0 right-0 -bottom-8 text-green-400 text-sm mt-2"
                 >
-                  Thank you for subscribing!
+                  Obrigado por subscrever!
                 </motion.div>
               )}
               {status === 'error' && (

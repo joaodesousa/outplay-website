@@ -1,0 +1,209 @@
+{
+  "common": {
+    "home": "Início",
+    "about": "Sobre",
+    "contact": "Contacto",
+    "blog": "Blog"
+  },
+  "home": {
+    "welcomeMessage": "Bem-vindo à OUTPLAY"
+  },
+  "buttons": {
+    "readMore": "Ler Mais",
+    "submit": "Enviar",
+    "cancel": "Cancelar"
+  },
+  "hero": {
+    "title": {
+      "we": "nós",
+      "writeTheRules": "escrevemos as regras",
+      "you": "tu",
+      "follow": "segues"
+    },
+    "subtitle": "o impossível nunca fez o nosso estilo",
+    "scrollPrompt": "faz scroll para explorar"
+  },
+  "navigation": {
+    "projects": "projectos",
+    "whatWeDo": "o que fazemos",
+    "blog": "blog",
+    "about": "sobre",
+    "contactLink": "contacto",
+    "menu": "menu",
+    "close": "fechar",
+    "contactTitle": "contacto",
+    "followUs": "Segue-nos"
+  },
+  "projects": {
+    "title": "coisas que fizemos",
+    "loading": "A carregar projectos...",
+    "notFound": "Nenhum projecto encontrado.",
+    "viewProject": "Ver projecto",
+    "clientLabel": "Cliente",
+    "yearLabel": "Ano",
+    "categoryLabel": "Categoria"
+  },
+  "skills": {
+    "mainTitle": "o que fazemos",
+    "hideCapabilities": "Ocultar Capacidades",
+    "viewCapabilities": "Ver Capacidades",
+    "categories": {
+      "funding": {
+        "title": "Financiamento",
+        "description": "Toda a jornada começa com recursos. Encontramos os ângulos que os outros não veem, transformando propostas tecnicamente sólidas em narrativas convincentes que se destacam para os avaliadores e garantem o financiamento que impulsiona a tua visão.",
+        "skills": [
+          "Candidaturas Erasmus+",
+          "Submissões Horizon Europe",
+          "Financiamento Portugal 2030",
+          "Conceptualização de projetos",
+          "Desenvolvimento de orçamentos",
+          "Avaliação de impacto"
+        ]
+      },
+      "branding": {
+        "title": "Identidade de Marca",
+        "description": "Criamos identidades que rejeitam o esperado e abraçam o distinto, desenvolvemos linguagens visuais e verbais que capturam a sua abordagem única para mudar o jogo.",
+        "skills": [
+          "Desenvolvimento de identidade visual",
+          "Posicionamento de marca",
+          "Guias de marca",
+          "Design de logótipo",
+          "Sistemas de tipografia",
+          "Storytelling de marca"
+        ]
+      },
+      "digital": {
+        "title": "Experiências Digitais",
+        "description": "A tua identidade merece uma presença digital que quebra o molde. Criamos experiências surpreendentes e intuitivas — porque destacar-se não significa sacrificar clareza ou função.",
+        "skills": [
+          "Design e desenvolvimento de websites",
+          "Criação de plataformas",
+          "Design de experiência do utilizador",
+          "Desenvolvimento de produtos digitais",
+          "Visualização de dados",
+          "Soluções interativas"
+        ]
+      },
+      "transformation": {
+        "title": "Transformação Digital",
+          "description": "Libertar-se de processos desatualizados não se trata apenas de novas ferramentas — trata-se de novo pensamento. Guiamos organizações através da evolução digital, encontrando a combinação certa de tecnologia e estratégia para transformar a tua forma de trabalhar sem perder o que te torna único.",
+        "skills": [
+          "Digitalização de processos",
+          "Otimização de fluxos de trabalho",
+          "Integração de ferramentas digitais",
+          "Modernização de sistemas legados",
+          "Apoio à adaptação de equipas",
+          "Avaliação de maturidade digital"
+        ]
+      },
+      "communication": {
+        "title": "Estratégia de Comunicação",
+        "description": "Com a tua base estabelecida, é hora de ser ouvido. Desenvolvemos abordagens de comunicação que contornam o convencional, criando mensagens que ressoam com as pessoas que importam para a tua missão.",
+        "skills": [
+          "Mensagens estratégicas",
+          "Desenvolvimento de conteúdo",
+          "Estratégia de redes sociais",
+          "Disseminação de projetos",
+          "Envolvimento do público",
+          "Planeamento de comunicação"
+        ]
+      },
+      "experiential": {
+        "title": "Design de Eventos",
+        "description": "A jornada culmina com impacto no mundo real. Criamos experiências onde os teus públicos não são apenas observadores passivos, mas participantes ativos em algo significativo — a expressão máxima da sua visão.",
+        "skills": [
+          "Planeamento de eventos",
+          "Design de experiências",
+          "Soluções para eventos híbridos",
+          "Utilização de espaços",
+          "Branding de eventos",
+          "Envolvimento de participantes"
+        ]
+      }
+    }
+  },
+  "contact": {
+    "sectionTitle": {
+      "ready": "Pronto para ",
+      "write": "escrever",
+      "newRules": "novas regras",
+      "together": "juntos?"
+    },
+    "formSubtitle": "Fala connosco",
+    "placeholderName": "Insere o teu nome aqui",
+    "placeholderEmail": "Escreve o teu email aqui",
+    "placeholderMessage": "Começa a escrever",
+    "buttonSend": "Enviar mensagem",
+    "buttonSending": "A enviar...",
+    "successTitle": "Mensagem Enviada",
+    "successMessage": "Obrigado pelo contacto. Responderemos em breve!",
+    "errorTitle": "Erro",
+    "errorFillFields": "Por favor, preenche todos os campos",
+    "errorValidEmail": "Por favor, insere um endereço de email válido",
+    "errorSubmitFailed": "Falha ao enviar mensagem. Por favor, tenta novamente.",
+    "errorUnexpected": "Ocorreu um erro inesperado. Por favor, tenta mais tarde.",
+    "errorSomethingWrong": "Algo correu mal. Por favor, tenta novamente."
+  },
+  "footer": {
+    "newsletterTitle": "Newsletter",
+    "contactTitle": "Contacto",
+    "socialMediaTitle": "Redes Sociais",
+    "newsletterPlaceholder": "Insere o teu email",
+    "newsletterAriaLabel": "Subscrever a newsletter",
+    "errorValidEmail": "Por favor, insere um endereço de email válido",
+    "newsletterSuccess": "Subscrito com sucesso!",
+    "newsletterErrorFailed": "Falha na subscrição. Por favor, tenta novamente.",
+    "newsletterErrorUnexpected": "Ocorreu um erro inesperado. Por favor, tenta mais tarde.",
+    "copyright": "© {{year}} OUTPLAY. Todos os direitos reservados.",
+    "privacyPolicyLink": "Política de Privacidade",
+    "cookiePolicyLink": "Política de Cookies"
+  },
+  "about": {
+    "mainTitle": "Sobre Nós",
+    "tabs": {
+      "mission": "Missão",
+      "approach": "Abordagem",
+      "values": "Valores"
+    },
+    "missionContent": {
+      "title": "A Nossa Missão",
+      "p1": "A OUTPLAY é uma agência de comunicação especializada dedicada a transformar conquistas científicas complexas em narrativas convincentes que ressoam com diversos públicos.",
+      "p2": "Acreditamos que grandes avanços científicos merecem uma comunicação igualmente excelente. A nossa missão é ampliar o impacto da ciência através de uma comunicação estratégica, criativa e acessível."
+    },
+    "approachContent": {
+      "title": "A Nossa Abordagem",
+      "p1": "Combinamos profundo conhecimento científico com storytelling criativo para preencher a lacuna entre inovação e compreensão.",
+      "p2": "A nossa equipa interdisciplinar trabalha em estreita colaboração com cientistas, instituições de investigação e empresas inovadoras para criar narrativas que capturam a essência do seu trabalho e o comunicam eficazmente."
+    },
+    "valuesContent": {
+      "title": "Os Nossos Valores",
+      "p1": "Rigor, criatividade e acessibilidade estão no cerne de tudo o que fazemos. Estamos empenhados em manter a integridade científica enquanto tornamos conceitos complexos compreensíveis.",
+      "p2": "Valorizamos a colaboração, a inovação e a aprendizagem contínua, mantendo-nos na vanguarda tanto dos avanços científicos como das estratégias de comunicação."
+    },
+    "statsSection": {
+      "yearsExperience": "Anos de Experiência",
+      "scientificProjects": "Projetos Científicos",
+      "researchPartners": "Parceiros de Investigação",
+      "industryAwards": "Prémios da Indústria"
+    },
+    "teamSection": {
+      "title": "A Nossa Equipa",
+      "viewAllButton": "Ver Todos os Membros da Equipa"
+    }
+  },
+  "cookieNotice": {
+    "title": "Aviso de Cookies",
+    "message": "Este website utiliza cookies para melhorar a sua experiência de navegação.",
+    "necessaryOnlyButton": "Apenas necessários",
+    "acceptAllButton": "Aceitar todos"
+  },
+  "blogNewsletter": {
+    "title": "Subscreve a Nossa Newsletter",
+    "subtitle": "Sê o primeiro a saber o que se segue, não o que é agora.",
+    "emailPlaceholder": "O teu endereço de email",
+    "buttonSubscribe": "Subscrever",
+    "successMessage": "Obrigado por subscreveres!",
+    "errorFailed": "A subscrição falhou",
+    "errorUnexpected": "Ocorreu um erro inesperado"
+  }
+} 

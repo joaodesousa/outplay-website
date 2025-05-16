@@ -6,6 +6,7 @@ import Image from "next/image"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { getStoryblokApi } from "@storyblok/react"
+import { useLocale } from "@/lib/i18n"
 
 interface Project {
   title: string
@@ -18,25 +19,33 @@ interface Project {
 }
 
 export function Projects() {
+  const { locale, t } = useLocale()
   const [activeIndex, setActiveIndex] = useState(0)
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchProjects = async () => {
+    console.log("[Projects] Fetching projects for locale:", locale); // Debug log
     try {
       setIsLoading(true)
       const storyblokApi = getStoryblokApi()
       
       if (!storyblokApi) {
-        console.error("Storyblok API is not initialized")
+        console.error("[Projects] Storyblok API is not initialized");
         setIsLoading(false)
         return
       }
       
+      const startsWith = `${locale}/projects/`;
+      console.log("[Projects] Storyblok API call params:", { version: "published", starts_with: startsWith, language: locale }); // Debug log
+
       const { data } = await storyblokApi.get("cdn/stories", {
         version: "published",
-        starts_with: "projects/",
+        starts_with: startsWith,
+        language: locale,
       })
+
+      console.log("[Projects] Storyblok API response data:", data); // Debug log
 
       if (data && data.stories && data.stories.length > 0) {
         const formattedProjects = data.stories.map((story: any) => {
@@ -61,7 +70,7 @@ export function Projects() {
         setProjects(formattedProjects);
       }
     } catch (error) {
-      console.error("Error fetching projects:", error)
+      console.error("[Projects] Error fetching projects:", error)
     } finally {
       setIsLoading(false)
     }
@@ -69,17 +78,17 @@ export function Projects() {
 
   useEffect(() => {
     fetchProjects()
-  }, [])
+  }, [locale])
 
   if (isLoading) {
     return (
-      <section id="portfolio" className="py-32">
+      <section id="projects" className="py-32" style={{ scrollMarginTop: '10rem' }}>
         <div className="container mx-auto px-6 md:px-12">
           <div className="flex items-center mb-24">
             <div className="w-3 h-3 bg-white rounded-full mr-8" />
-            <h2 className="text-5xl md:text-6xl font-bold">things we did</h2>
+            <h2 className="text-5xl md:text-6xl font-bold">{t("projects.title")}</h2>
           </div>
-          <p className="text-center text-gray-300">Loading projects...</p>
+          <p className="text-center text-gray-300">{t("projects.loading")}</p>
         </div>
       </section>
     )
@@ -88,20 +97,20 @@ export function Projects() {
   // If no projects are found
   if (projects.length === 0) {
     return (
-      <section id="portfolio" className="py-32">
+      <section id="projects" className="py-32" style={{ scrollMarginTop: '10rem' }}>
         <div className="container mx-auto px-6 md:px-12">
           <div className="flex items-center mb-24">
             <div className="w-3 h-3 bg-white rounded-full mr-8" />
-            <h2 className="text-5xl md:text-6xl font-bold">things we did</h2>
+            <h2 className="text-5xl md:text-6xl font-bold">{t("projects.title")}</h2>
           </div>
-          <p className="text-center text-gray-300">No projects found.</p>
+          <p className="text-center text-gray-300">{t("projects.notFound")}</p>
         </div>
       </section>
     )
   }
 
   return (
-    <section id="portfolio" className="py-32">
+    <section id="projects" className="py-32" style={{ scrollMarginTop: '10rem' }}>
       <div className="container mx-auto px-6 md:px-12">
         <motion.div
           className="flex items-center mb-24"
@@ -111,7 +120,7 @@ export function Projects() {
           transition={{ duration: 0.8 }}
         >
           <div className="w-3 h-3 bg-white rounded-full mr-8" />
-          <h2 className="text-5xl md:text-6xl font-bold">things we did</h2>
+          <h2 className="text-5xl md:text-6xl font-bold">{t("projects.title")}</h2>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -181,7 +190,7 @@ export function Projects() {
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       >
                         <Link href={projects[activeIndex].url}>
-                        <span>View project</span>
+                        <span>{t("projects.viewProject")}</span>
                         </Link>
                         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-200" />
                       </motion.button>
@@ -190,15 +199,15 @@ export function Projects() {
                     <div className="md:col-span-4">
                       <div className="space-y-6">
                         <div>
-                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Client</h4>
+                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">{t("projects.clientLabel")}</h4>
                           <p className="text-white">{projects[activeIndex].client}</p>
                         </div>
                         <div>
-                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Year</h4>
+                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">{t("projects.yearLabel")}</h4>
                           <p className="text-white">{projects[activeIndex].year}</p>
                         </div>
                         <div>
-                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">Category</h4>
+                          <h4 className="text-sm uppercase tracking-wider text-gray-500 mb-2">{t("projects.categoryLabel")}</h4>
                           <p className="text-white">{projects[activeIndex].category}</p>
                         </div>
                       </div>

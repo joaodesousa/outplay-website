@@ -3,7 +3,8 @@ import Image from "next/image"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { ArrowRight } from "lucide-react"
-import { StoryblokNewsletter } from "../blog/components/storyblok-newsletter"
+// import { StoryblokNewsletter } from "../blog/components/storyblok-newsletter"
+import { BlogNewsletter } from "@/app/en/blog/components/newsletter"
 
 export default function AboutPage() {
   return (
@@ -15,11 +16,11 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 md:px-12">
           <div className="max-w-5xl">
             <h1 className="text-6xl md:text-8xl font-bold leading-none tracking-tighter mb-12">
-              We don't
+              Nós não
               <br />
-              follow rules.
+              seguimos regras.
               <br />
-              <span className="text-gray-500">We make them.</span>
+              <span className="text-gray-500">Nós fazemo-las.</span>
             </h1>
           </div>
         </div>
@@ -30,31 +31,33 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
             <div className="lg:col-span-4">
-              <h2 className="text-3xl font-bold mb-6">Our Philosophy</h2>
+              <h2 className="text-3xl font-bold mb-6">A Nossa Filosofia</h2>
               <div className="w-16 h-1 bg-white mb-8" />
             </div>
 
             <div className="lg:col-span-8">
               <div className="prose prose-lg prose-invert max-w-none">
                 <p className="text-xl">
-                  In a world of followers, OUTPLAY chooses a different path. We're not here to fit in or to follow
-                  established playbooks. We're here to create our own.
+                  Num mundo de seguidores, a OUTPLAY escolhe um caminho diferente. Não estamos aqui para nos
+                  encaixarmos ou para seguir manuais estabelecidos. Estamos aqui para criar os nossos.
                 </p>
 
                 <p className="mt-4">
-                  Rules exist for a reason. They create order, establish expectations, and make things predictable. But
-                  predictable isn't memorable. Predictable doesn't stand out. Predictable doesn't change the game.
+                  As regras existem por um motivo. Criam ordem, estabelecem expectativas e tornam as coisas
+                  previsíveis. Mas o previsível não é memorável. O previsível não se destaca. O previsível não muda o
+                  jogo.
                 </p>
 
                 <p>
-                  We understand that the most powerful ideas often emerge when you question the very foundations others
-                  take for granted. It's not about breaking rules for the sake of rebellion—it's about recognizing when
-                  those rules no longer serve the greater purpose.
+                  Compreendemos que as ideias mais poderosas surgem frequentemente quando se questionam os próprios
+                  alicerces que outros tomam como garantidos. Não se trata de quebrar regras por uma questão de
+                  rebelião — trata-se de reconhecer quando essas regras já não servem o propósito maior.
                 </p>
 
                 <p>
-                  You'll never hear us say something can't be done. That phrase isn't in our vocabulary. Where others
-                  see impossible hurdles, we see questions that haven't found their answers yet.
+                  Nunca nos vais ouvir dizer que algo não pode ser feito. Essa frase não está no nosso vocabulário.
+                  Onde outros veem obstáculos impossíveis, nós vemos perguntas que ainda não encontraram as suas
+                  respostas.
                 </p>
               </div>
             </div>
@@ -66,7 +69,7 @@ export default function AboutPage() {
       <section className="py-20 bg-white text-black">
         <div className="container mx-auto px-6 md:px-12">
           <h2 className="text-4xl md:text-6xl font-bold text-center max-w-4xl mx-auto">
-            The future belongs to those who define it, not those who merely accept it as it comes.
+            O futuro pertence a quem o define, não a quem o aceita.
           </h2>
         </div>
       </section>
@@ -127,26 +130,25 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
             <div className="lg:col-span-4">
-              <h2 className="text-3xl font-bold mb-6">Who We're For</h2>
+              <h2 className="text-3xl font-bold mb-6">Para Quem Somos</h2>
               <div className="w-16 h-1 bg-white mb-8" />
             </div>
 
             <div className="lg:col-span-8">
               <div className="prose prose-lg prose-invert max-w-none">
                 <p className="text-xl">
-                  OUTPLAY isn't for everyone. We're for the outliers, the questioners, the ones who feel constrained by
-                  how things "should" be done.
+                  A OUTPLAY não é para todos. Somos para os outliers, os questionadores, os que se sentem
+                  limitados pela forma como as coisas "devem" ser feitas.
                 </p>
 
                 <p>
-                  If you've ever found yourself thinking there must be a different approach, if you've ever wanted to
-                  bypass convention and try something that hasn't been done before—we might be the partners you've been
-                  looking for.
+                  Se alguma vez pensaste que deve haver uma abordagem diferente, se alguma vez quiseste contornar o
+                  convencional e tentar algo que nunca foi feito antes — podemos ser os parceiros que procuras.
                 </p>
 
                 <p>
-                  Because ultimately, that's what drives us: the belief that the most interesting paths are the ones yet
-                  to be traveled. The rules yet to be written.
+                  Porque, no fundo, é isso que nos move: a crença de que os caminhos mais interessantes são os que
+                  ainda estão por percorrer. As regras ainda por escrever.
                 </p>
               </div>
 
@@ -155,7 +157,7 @@ export default function AboutPage() {
                   href="/contact"
                   className="group inline-flex items-center border border-white px-8 py-4 hover:bg-white hover:text-black transition-colors duration-300"
                 >
-                  START THE CONVERSATION
+                  COMEÇAR A CONVERSA
                   <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform duration-300" size={18} />
                 </Link>
               </div>
@@ -165,7 +167,7 @@ export default function AboutPage() {
       </section>
 
       {/* Final Statement */}
-      <StoryblokNewsletter />
+      <BlogNewsletter />
 
       <Footer />
     </main>

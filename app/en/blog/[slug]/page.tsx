@@ -50,12 +50,31 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
   
+  // Base URL for the site
+  const baseUrl = 'https://outplay.pt';
+  const enUrl = `${baseUrl}/en/blog/${slug}`;
+  const ptUrl = `${baseUrl}/pt/blog/${slug}`;
+  
   return {
     title: `${story.content.title} | OUTPLAY Blog`,
     description: story.content.excerpt || '',
-    openGraph: story.content.featured_image ? {
-      images: [{ url: story.content.featured_image.filename }],
-    } : undefined,
+    openGraph: {
+      type: 'article',
+      url: enUrl,
+      title: `${story.content.title} | OUTPLAY Blog`,
+      description: story.content.excerpt || '',
+      locale: 'en_US',
+      images: story.content.featured_image ? 
+        [{ url: story.content.featured_image.filename }] : [],
+      siteName: 'OUTPLAY',
+    },
+    alternates: {
+      canonical: enUrl,
+      languages: {
+        'en': enUrl,
+        'pt-PT': ptUrl,
+      },
+    },
   };
 }
 

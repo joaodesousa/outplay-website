@@ -1,9 +1,11 @@
-export function generateOrganizationSchema() {
+import { Locale } from './i18n';
+
+export function generateOrganizationSchema(locale: Locale = 'pt') {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'OUTPLAY',
-    url: 'https://outplay.pt',
+    url: `https://outplay.pt/${locale}`,
     logo: 'https://outplay.pt/logo_squared.png', // Updated to use the square logo
     sameAs: [
       'https://twitter.com/outplaypt', // Update with your social profiles
@@ -18,24 +20,26 @@ export function generateOrganizationSchema() {
       areaServed: 'Worldwide',
       availableLanguage: ['English', 'Portuguese'],
     },
+    inLanguage: locale === 'pt' ? 'pt-PT' : 'en',
   };
 }
 
-export function generateWebsiteSchema() {
+export function generateWebsiteSchema(locale: Locale = 'pt') {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'OUTPLAY',
-    url: 'https://outplay.pt',
+    url: `https://outplay.pt/${locale}`,
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://outplay.pt/search?q={search_term_string}',
+      target: `https://outplay.pt/${locale}/search?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
+    inLanguage: locale === 'pt' ? 'pt-PT' : 'en',
   };
 }
 
-export function generateBlogPostSchema(post: any) {
+export function generateBlogPostSchema(post: any, locale: Locale = 'pt') {
   if (!post) return null;
   
   return {
@@ -60,17 +64,18 @@ export function generateBlogPostSchema(post: any) {
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://outplay.pt/blog/${post.slug}`,
+      '@id': `https://outplay.pt/${locale}/blog/${post.slug}`,
     },
+    inLanguage: locale === 'pt' ? 'pt-PT' : 'en',
   };
 }
 
-export function generateLocalBusinessSchema() {
+export function generateLocalBusinessSchema(locale: Locale = 'pt') {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'OUTPLAY',
-    url: 'https://outplay.pt',
+    url: `https://outplay.pt/${locale}`,
     logo: 'https://outplay.pt/logo_squared.png',
     image: 'https://outplay.pt/logo_squared.png',
     telephone: '', // Add your contact number if available
@@ -101,5 +106,6 @@ export function generateLocalBusinessSchema() {
       closes: '18:00',
     },
     priceRange: '$$',
+    inLanguage: locale === 'pt' ? 'pt-PT' : 'en',
   };
 }

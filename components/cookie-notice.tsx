@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
+import { useLocale } from "@/lib/i18n"
 
 export function CookieNotice() {
+  const { t } = useLocale()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -47,27 +49,27 @@ export function CookieNotice() {
         >
           <div className="bg-black border-l-2 border-white p-6">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-sm uppercase tracking-wider font-medium">Cookie Notice</h3>
+              <h3 className="text-sm uppercase tracking-wider font-medium">{t("cookieNotice.title")}</h3>
               <button onClick={handleClose} className="text-gray-400 hover:text-white transition-colors">
                 <X size={16} />
               </button>
             </div>
 
-            <p className="text-sm text-gray-400 mb-6">This website uses cookies to enhance your browsing experience.</p>
+            <p className="text-sm text-gray-400 mb-6">{t("cookieNotice.message")}</p>
 
             <div className="flex items-center space-x-6">
               <button
                 onClick={handleAcceptNecessary}
                 className="text-sm text-gray-400 hover:text-white transition-colors"
               >
-                Necessary only
+                {t("cookieNotice.necessaryOnlyButton")}
               </button>
 
               <button
                 onClick={handleAcceptAll}
                 className="text-sm border border-white px-6 py-2 hover:bg-white hover:text-black transition-colors"
               >
-                Accept all
+                {t("cookieNotice.acceptAllButton")}
               </button>
             </div>
           </div>

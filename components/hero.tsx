@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect } from "react"
 import { motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
+import { useLocale } from "@/lib/i18n"
 
 export function Hero() {
+  const { t } = useLocale()
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   const [scrollY, setScrollY] = useState(0)
@@ -159,8 +161,8 @@ export function Hero() {
               x: { type: "spring", stiffness: 50, damping: 20 },
             }}
           >
-            <span className="font-light">we</span> <span className="font-bold">write the rules</span>{" "}
-            <span className="font-light">you</span> <span className="font-bold">follow</span>
+            <span className="font-light">{t("hero.title.we")}</span> <span className="font-bold">{t("hero.title.writeTheRules")}</span>{" "}
+            <span className="font-light">{t("hero.title.you")}</span> <span className="font-bold">{t("hero.title.follow")}</span>
           </motion.h1>
 
           <motion.p
@@ -181,7 +183,7 @@ export function Hero() {
               x: { type: "spring", stiffness: 50, damping: 20 },
             }}
           >
-           the impossible was never our style
+            {t("hero.subtitle")}
           </motion.p>
         </motion.div>
       </div>
@@ -196,7 +198,7 @@ export function Hero() {
           onClick={scrollToNextSection}
           style={{ opacity: contentOpacity }}
         >
-          <p className="text-sm text-gray-400 mb-2">Scroll to explore</p>
+          <p className="text-sm text-gray-400 mb-2">{t("hero.scrollPrompt")}</p>
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop" }}
